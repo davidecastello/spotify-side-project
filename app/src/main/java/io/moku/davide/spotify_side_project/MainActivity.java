@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -22,6 +23,7 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.moku.davide.spotify_side_project.utils.preferences.PreferencesManager;
 
 public class MainActivity extends Activity implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback
@@ -62,18 +64,31 @@ public class MainActivity extends Activity implements
 
     public void playButtonPressed() {
         if (isPlaying) {
-            playButton.setImageDrawable(getDrawable(R.drawable.ic_pause_circle));
-            play();
-        } else {
             playButton.setImageDrawable(getDrawable(R.drawable.ic_play_circle));
             pause();
+        } else {
+            playButton.setImageDrawable(getDrawable(R.drawable.ic_pause_circle));
+            play();
         }
         isPlaying = !isPlaying;
     }
 
     public void play() {
         // This is the line that plays a song.
-        mPlayer.playUri(null, Constants.A_GOOD_SONG, 0, 0);
+        //mPlayer.playUri(null, Constants.A_GOOD_SONG, 0, 0);
+        mPlayer.resume(new Player.OperationCallback() {
+            @Override
+            public void onSuccess() {
+                if(!mPlayer.getPlaybackState().isPlaying) {
+                    mPlayer.playUri(null, Constants.A_GOOD_SONG, 0, 0);
+                }
+            }
+
+            @Override
+            public void onError(Error error) {
+                Toast.makeText(MainActivity.this, "Error while trying to resume!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void pause() {
@@ -88,6 +103,7 @@ public class MainActivity extends Activity implements
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
+                PreferencesManager.storeAccessToken(this, response.getAccessToken());
                 Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
                 Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
                     @Override
