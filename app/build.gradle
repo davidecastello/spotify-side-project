@@ -29,9 +29,14 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
-    // This library handles authentication and authorization
+    /* Spotify */
+    // Authentication and authorization
     compile 'com.spotify.android:auth:1.0.0-alpha'
-
-    // This library handles music playback
+    // Music playback
     compile 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
+
+    /* UI */
+    // Butterknife
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }

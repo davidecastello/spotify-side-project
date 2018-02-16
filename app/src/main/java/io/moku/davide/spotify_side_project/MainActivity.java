@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -18,6 +19,10 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class MainActivity extends Activity implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback
 {
@@ -27,17 +32,15 @@ public class MainActivity extends Activity implements
     private static final int REQUEST_CODE = 1337;
 
     private Player mPlayer;
-    private Button playButton;
+    @BindView(R.id.playButton) ImageButton playButton;
+
+    private boolean isPlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        playButton = findViewById(R.id.playButton);
-
-        // set listeners
-        setListeners();
+        ButterKnife.bind(this);
 
         // The only thing that's different is we added the 5 lines below.
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
@@ -46,13 +49,35 @@ public class MainActivity extends Activity implements
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
-    private void setListeners() {
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playMyJam();
-            }
-        });
+    @OnClick(R.id.playButton)
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.playButton:
+                playButtonPressed();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void playButtonPressed() {
+        if (isPlaying) {
+            playButton.setImageDrawable(getDrawable(R.drawable.ic_pause_circle));
+            play();
+        } else {
+            playButton.setImageDrawable(getDrawable(R.drawable.ic_play_circle));
+            pause();
+        }
+        isPlaying = !isPlaying;
+    }
+
+    public void play() {
+        // This is the line that plays a song.
+        mPlayer.playUri(null, Constants.A_GOOD_SONG, 0, 0);
+    }
+
+    public void pause() {
+        mPlayer.pause(null);
     }
 
     @Override
@@ -110,13 +135,6 @@ public class MainActivity extends Activity implements
     @Override
     public void onLoggedIn() {
         Log.d("MainActivity", "User logged in");
-
-        playMyJam();
-    }
-
-    public void playMyJam() {
-        // This is the line that plays a song.
-        mPlayer.playUri(null, "spotify:track:7safX55XidhznxK5eDdDm5", 0, 0);
     }
 
     @Override

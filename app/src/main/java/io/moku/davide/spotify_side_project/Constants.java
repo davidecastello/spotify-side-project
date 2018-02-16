@@ -8,5 +8,8 @@ package io.moku.davide.spotify_side_project;
 
 public class Constants {
 
+    // My Application "Side Project" registered on the Spotify Dashboard https://beta.developer.spotify.com/dashboard/applications
     public static final String CLIENT_ID = "9ecd6e858f1648f98a6f90589b866ee3";
+
+    public static final String A_GOOD_SONG = "spotify:track:7safX55XidhznxK5eDdDm5";
 }
