@@ -135,7 +135,7 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         api.setAccessToken(PreferencesManager.getAccessToken(this));
         SpotifyService spotify = api.getService();
         HashMap<String, Object> options = new HashMap<>();
-        options.put("limit", 50);
+        options.put("limit", 20);
         spotify.getMySavedTracks(options, new SpotifyCallback<Pager<SavedTrack>>() {
             @Override
             public void success(Pager<SavedTrack> savedTrackPager, Response response) {
