@@ -1,3 +1,9 @@
 <resources>
+    <!-- Progress Dialog Helper -->
+    <string name="default_inital_msg">Attendere…</string>
+    <string name="default_done_msg">Operazione completata con successo!</string>
+    <string name="default_animation_name">tick.json</string>
+
+    <!-- App -->
     <string name="app_name">Guccify</string>
 </resources>

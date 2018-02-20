@@ -3,10 +3,13 @@ package io.moku.davide.spotify_side_project;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -20,22 +23,38 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.moku.davide.spotify_side_project.utils.preferences.PreferencesManager;
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyCallback;
+import kaaes.spotify.webapi.android.SpotifyError;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.SavedTrack;
+import retrofit.client.Response;
 
-public class MainActivity extends Activity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback
-{
+public class MainActivity extends Activity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+
+    /* Constants */
+    public static final String TAG = MainActivity.class.getSimpleName();
     private static final String CLIENT_ID = Constants.CLIENT_ID;
     private static final String REDIRECT_URI = "spotifySideProject://callback";
     // Request code that will be used to verify if the result comes from correct activity
     private static final int REQUEST_CODE = 1337;
 
-    private Player mPlayer;
+    /* UI */
     @BindView(R.id.playButton) ImageButton playButton;
+    @BindView(R.id.prevButton) ImageButton prevButton;
+    @BindView(R.id.nextButton) ImageButton nextButton;
+    @BindView(R.id.savedTracksRV) RecyclerView savedTracksRV;
 
+    /* Fields */
+    private Player mPlayer;
+    private SavedTracksAdapter savedTracksAdapter;
     private boolean isPlaying = false;
 
     @Override
@@ -46,17 +65,24 @@ public class MainActivity extends Activity implements
 
         // The only thing that's different is we added the 5 lines below.
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming"});
+        builder.setScopes(new String[]{"user-read-private", "user-library-read", "streaming"});
         AuthenticationRequest request = builder.build();
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+
+        enablePlayer(false);
     }
 
-    @OnClick(R.id.playButton)
+    @OnClick({R.id.playButton, R.id.prevButton, R.id.nextButton})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.playButton:
                 playButtonPressed();
                 break;
+            case R.id.prevButton:
+                playSong(savedTracksAdapter.prevSong().track.uri);
+                break;
+            case R.id.nextButton:
+                playSong(savedTracksAdapter.nextSong().track.uri);
             default:
                 break;
         }
@@ -68,19 +94,26 @@ public class MainActivity extends Activity implements
             pause();
         } else {
             playButton.setImageDrawable(getDrawable(R.drawable.ic_pause_circle));
-            play();
+            resumeOrPlay();
         }
         isPlaying = !isPlaying;
     }
 
-    public void play() {
-        // This is the line that plays a song.
-        //mPlayer.playUri(null, Constants.A_GOOD_SONG, 0, 0);
+    // SavedTracksAdapter should call this method
+    public void playSong(String uri) {
+        if (!isPlaying) {
+            playButton.setImageDrawable(getDrawable(R.drawable.ic_pause_circle));
+            isPlaying = !isPlaying;
+        }
+        _playSong(uri);
+    }
+
+    public void resumeOrPlay() {
         mPlayer.resume(new Player.OperationCallback() {
             @Override
             public void onSuccess() {
                 if(!mPlayer.getPlaybackState().isPlaying) {
-                    mPlayer.playUri(null, Constants.A_GOOD_SONG, 0, 0);
+                    playSong();
                 }
             }
 
@@ -89,6 +122,47 @@ public class MainActivity extends Activity implements
                 Toast.makeText(MainActivity.this, "Error while trying to resume!", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void playSong() {
+        _playSong(savedTracksAdapter.nextSong().track.uri);
+    }
+
+    public void tryToRetrieveSavedTracks() {
+        final Activity activity = this;
+        SpotifyApi api = new SpotifyApi();
+        api.setAccessToken(PreferencesManager.getAccessToken(this));
+        SpotifyService spotify = api.getService();
+        spotify.getMySavedTracks(new SpotifyCallback<Pager<SavedTrack>>() {
+            @Override
+            public void success(Pager<SavedTrack> savedTrackPager, Response response) {
+                savedTracksAdapter = new SavedTracksAdapter(activity, savedTrackPager.items);
+                savedTracksRV.setLayoutManager(new LinearLayoutManager(activity, LinearLayout.VERTICAL, false));
+                savedTracksRV.setAdapter(savedTracksAdapter);
+                enablePlayer(true);
+            }
+
+            @Override
+            public void failure(SpotifyError error) {
+                Log.e(TAG, error.getMessage());
+            }
+        });
+    }
+
+    private void enablePlayer(boolean enable) {
+        enableButton(playButton, enable);
+        enableButton(prevButton, enable);
+        enableButton(nextButton, enable);
+    }
+
+    private void enableButton(ImageButton button, boolean enable) {
+        button.setEnabled(enable);
+        button.setAlpha(enable ? 1.0f : 0.3f);
+    }
+
+    private void _playSong(String uri) {
+        // This is the line that actually plays a song.
+        mPlayer.playUri(null, uri, 0, 0);
     }
 
     public void pause() {
@@ -133,6 +207,9 @@ public class MainActivity extends Activity implements
         Log.d("MainActivity", "Playback event received: " + playerEvent.name());
         switch (playerEvent) {
             // Handle event type as necessary
+            case kSpPlaybackNotifyTrackDelivered:
+                playButtonPressed();
+                break;
             default:
                 break;
         }
@@ -151,6 +228,8 @@ public class MainActivity extends Activity implements
     @Override
     public void onLoggedIn() {
         Log.d("MainActivity", "User logged in");
+
+        tryToRetrieveSavedTracks();
     }
 
     @Override

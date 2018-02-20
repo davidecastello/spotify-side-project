@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/trackCellLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|start"
+        android:padding="16dp"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:id="@+id/trackTitle"
+            style="@style/customTextViewsBold"
+            android:text="Aqualung"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginBottom="3dp"/>
+
+        <TextView
+            android:id="@+id/trackArtistAndAlbum"
+            style="@style/customTextViewsLight"
+            android:text="Jethro Tull • Aqualung"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+    </LinearLayout>
+</LinearLayout>

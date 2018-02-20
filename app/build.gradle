@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 26
@@ -20,6 +22,7 @@ android {
 
 repositories {
     mavenCentral()
+    maven { url "https://jitpack.io" }
     flatDir {
         dirs 'libs'
     }
@@ -28,15 +31,25 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
 
     /* Spotify */
     // Authentication and authorization
     compile 'com.spotify.android:auth:1.0.0-alpha'
     // Music playback
     compile 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
+    // Wrapper for Spotify Web API
+    compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
 
     /* UI */
     // Butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    kapt 'com.jakewharton:butterknife-compiler:8.8.1'
+    // Lottie
+    compile 'com.airbnb.android:lottie:2.3.1'
+
+    /* Kotlin */
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }

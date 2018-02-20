@@ -5,4 +5,40 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="customTextViews">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="customTextViewsBold" parent="customTextViews">
+        <item name="android:fontFamily">sans-serif-bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="customTextViewsLight" parent="customTextViews">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="line">
+        <item name="android:background">@color/darkerGrey</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+    </style>
+
+    <style name="customButtons" parent="customTextViewsLight">
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:background">@drawable/cell_background</item>
+    </style>
+
+    <style name="customPostButtons" parent="customTextViewsLight">
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:background">?android:selectableItemBackground</item>
+    </style>
+
 </resources>
