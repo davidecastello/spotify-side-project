@@ -23,6 +23,7 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -133,7 +134,9 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         SpotifyApi api = new SpotifyApi();
         api.setAccessToken(PreferencesManager.getAccessToken(this));
         SpotifyService spotify = api.getService();
-        spotify.getMySavedTracks(new SpotifyCallback<Pager<SavedTrack>>() {
+        HashMap<String, Object> options = new HashMap<>();
+        options.put("limit", 50);
+        spotify.getMySavedTracks(options, new SpotifyCallback<Pager<SavedTrack>>() {
             @Override
             public void success(Pager<SavedTrack> savedTrackPager, Response response) {
                 savedTracksAdapter = new SavedTracksAdapter(activity, savedTrackPager.items);
