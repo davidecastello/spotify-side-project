@@ -1,8 +1,5 @@
 <resources>
-    <!-- Progress Dialog Helper -->
-    <string name="default_inital_msg">Attendere…</string>
-    <string name="default_done_msg">Operazione completata con successo!</string>
-    <string name="default_animation_name">tick.json</string>
+
 
     <!-- App -->
     <string name="app_name">Guccify</string>
@@ -10,4 +7,42 @@
     <string name="homepage_title">GucciFy</string>
     <string name="homepage_title_part_1">Gucci</string>
     <string name="homepage_title_part_2">Fy</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Progress Dialog Helper -->
+    <string name="default_inital_msg">Attendere…</string>
+    <string name="default_done_msg">Operazione completata con successo!</string>
+    <string name="default_animation_name">tick.json</string>
+
+    <!-- Grav -->
+    <string-array name="red">
+        <item>#ba0303</item>
+        <item>#ff7878</item>
+        <item>#9e3535</item>
+        <item>#fd3939</item>
+    </string-array>
+    <string-array name="path">
+        <item>com.github.glomadrian.grav.generator.animation.PathAnimator</item>
+        <item>com.github.glomadrian.grav.generator.animation.BallSizeAnimator</item>
+    </string-array>
+    <string name="circle">
+M527.023,71.8233 C780.213,71.8233,985.464,277.075,985.464,530.265
+C985.464,783.455,780.213,988.707,527.023,988.707
+C273.832,988.707,68.5809,783.455,68.5809,530.265
+C68.5809,277.075,273.832,71.8233,527.023,71.8233 Z
+  </string>
+    <integer name="circle_original_width">1062</integer>
+    <integer name="circle_original_height">1062</integer>
 </resources>
