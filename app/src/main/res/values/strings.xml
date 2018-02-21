@@ -6,4 +6,8 @@
 
     <!-- App -->
     <string name="app_name">Guccify</string>
+
+    <string name="homepage_title">GucciFy</string>
+    <string name="homepage_title_part_1">Gucci</string>
+    <string name="homepage_title_part_2">Fy</string>
 </resources>

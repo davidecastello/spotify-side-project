@@ -3,6 +3,7 @@ package io.moku.davide.spotify_side_project;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.hanks.htextview.base.HTextView;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -46,12 +48,15 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
     private static final String REDIRECT_URI = "spotifySideProject://callback";
     // Request code that will be used to verify if the result comes from correct activity
     private static final int REQUEST_CODE = 1337;
+    public static final int SECONDS = 1000;
 
     /* UI */
     @BindView(R.id.playButton) ImageButton playButton;
     @BindView(R.id.prevButton) ImageButton prevButton;
     @BindView(R.id.nextButton) ImageButton nextButton;
     @BindView(R.id.savedTracksRV) RecyclerView savedTracksRV;
+    @BindView(R.id.homepageTitle) HTextView title_part_1;
+    @BindView(R.id.homepageTitle2) HTextView title_part_2;
 
     /* Fields */
     private Player mPlayer;
@@ -64,6 +69,9 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        // show title
+        showPartialTitle();
+
         // The only thing that's different is we added the 5 lines below.
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
         builder.setScopes(new String[]{"user-read-private", "user-library-read", "streaming"});
@@ -71,6 +79,25 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
 
         enablePlayer(false);
+    }
+
+    public void showPartialTitle() {
+        title_part_1.animateText(getString(R.string.homepage_title_part_1));
+        new CountDownTimer(3 * SECONDS, SECONDS) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                //
+            }
+
+            @Override
+            public void onFinish() {
+                showFullTitle();
+            }
+        }.start();
+    }
+
+    public void showFullTitle() {
+        title_part_2.animateText(getString(R.string.homepage_title_part_2));
     }
 
     @OnClick({R.id.playButton, R.id.prevButton, R.id.nextButton})

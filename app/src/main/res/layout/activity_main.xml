@@ -7,16 +7,91 @@
     android:layout_height="match_parent"
     tools:context="io.moku.davide.spotify_side_project.MainActivity">
 
+    <RelativeLayout
+        android:id="@+id/homepageTitleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="20dp">
+
+    <!--<com.hanks.htextview.typer.TyperTextView
+        android:id="@+id/homepageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:layout_centerInParent="true"
+
+        app:charIncrease="1"
+        app:typerSpeed="180"/>-->
+
+        <TextView
+            style="@style/homepage_title"
+            android:id="@+id/fake_title"
+            android:layout_centerInParent="true"
+            android:visibility="invisible"
+            android:text="@string/homepage_title" />
+
+        <!--<com.hanks.htextview.fade.FadeTextView
+            style="@style/homepage_title"
+            android:id="@+id/homepageTitle"
+            android:layout_centerVertical="true"
+            android:layout_alignStart="@id/fake_title"
+            app:animationDuration="1500"/>
+
+        <com.hanks.htextview.fade.FadeTextView
+            style="@style/homepage_title"
+            android:id="@+id/homepageTitle2"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/homepageTitle"
+            app:animationDuration="2000"/>-->
+
+        <com.hanks.htextview.typer.TyperTextView
+            style="@style/homepage_title"
+            android:id="@+id/homepageTitle"
+            android:layout_centerVertical="true"
+            android:layout_alignStart="@id/fake_title"
+            app:charIncrease="1"
+            app:typerSpeed="180"/>
+
+        <com.hanks.htextview.typer.TyperTextView
+            style="@style/homepage_title"
+            android:id="@+id/homepageTitle2"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/homepageTitle"
+            app:charIncrease="1"
+            app:typerSpeed="180"/>
+
+    </RelativeLayout>
+
+    <View android:id="@+id/line"
+        style="@style/line"
+        app:layout_constraintTop_toBottomOf="@id/homepageTitleLayout"
+        app:layout_constraintBottom_toTopOf="@id/savedTracksRV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/savedTracksRV"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/playerLayout"
+        app:layout_constraintBottom_toTopOf="@+id/line2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line"
         app:layout_constraintVertical_bias="0.0"
         tools:itemCount="50" />
+
+    <View android:id="@+id/line2"
+        style="@style/line"
+        app:layout_constraintTop_toBottomOf="@id/savedTracksRV"
+        app:layout_constraintBottom_toTopOf="@id/playerLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <RelativeLayout
         android:id="@+id/playerLayout"

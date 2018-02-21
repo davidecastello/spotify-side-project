@@ -13,4 +13,7 @@
     <color name="amber">#ffe082</color>
     <color name="lime">#e6ee9c</color>
     <color name="lightRed">#e57373</color>
+    <color name="peach_orange">#FFD194</color>
+    <color name="peach_orange_darker">#ffb24d</color>
+    <color name="raw_sienna">#D1913C</color>
 </resources>
