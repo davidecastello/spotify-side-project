@@ -72,14 +72,30 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         // show title
         showPartialTitle();
 
-        // The only thing that's different is we added the 5 lines below.
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "user-library-read", "streaming"});
-        AuthenticationRequest request = builder.build();
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-
+        // disable player
         enablePlayer(false);
+
+        String accessToken = PreferencesManager.getAccessToken(this);
+        if (accessToken != null) {
+            setupPlayer(accessToken);
+        } else {
+            openLogin();
+        }
     }
+
+    @Override
+    protected void onDestroy() {
+        Spotify.destroyPlayer(this);
+        super.onDestroy();
+    }
+
+
+
+    /**
+     *
+     * UI
+     *
+     */
 
     public void showPartialTitle() {
         title_part_1.animateText(getString(R.string.homepage_title_part_1));
@@ -100,6 +116,17 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         title_part_2.animateText(getString(R.string.homepage_title_part_2));
     }
 
+    private void enablePlayer(boolean enable) {
+        enableButton(playButton, enable);
+        enableButton(prevButton, enable);
+        enableButton(nextButton, enable);
+    }
+
+    private void enableButton(ImageButton button, boolean enable) {
+        button.setEnabled(enable);
+        button.setAlpha(enable ? 1.0f : 0.3f);
+    }
+
     @OnClick({R.id.playButton, R.id.prevButton, R.id.nextButton})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -116,6 +143,43 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         }
     }
 
+
+    /**
+     *
+     * NETWORK
+     *
+     */
+
+    public void tryToRetrieveSavedTracks() {
+        final Activity activity = this;
+        SpotifyApi api = new SpotifyApi();
+        api.setAccessToken(PreferencesManager.getAccessToken(this));
+        SpotifyService spotify = api.getService();
+        HashMap<String, Object> options = new HashMap<>();
+        options.put("limit", 20);
+        spotify.getMySavedTracks(options, new SpotifyCallback<Pager<SavedTrack>>() {
+            @Override
+            public void success(Pager<SavedTrack> savedTrackPager, Response response) {
+                savedTracksAdapter = new SavedTracksAdapter(activity, savedTrackPager.items);
+                savedTracksRV.setLayoutManager(new LinearLayoutManager(activity, LinearLayout.VERTICAL, false));
+                savedTracksRV.setAdapter(savedTracksAdapter);
+                enablePlayer(true);
+            }
+
+            @Override
+            public void failure(SpotifyError error) {
+                Log.e(TAG, error.getMessage());
+            }
+        });
+    }
+
+
+    /**
+     *
+     * PLAYER
+     *
+     */
+
     public void playButtonPressed() {
         if (isPlaying) {
             playButton.setImageDrawable(getDrawable(R.drawable.ic_play_circle));
@@ -127,7 +191,6 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         isPlaying = !isPlaying;
     }
 
-    // SavedTracksAdapter should call this method
     public void playSong(String uri) {
         if (!isPlaying) {
             playButton.setImageDrawable(getDrawable(R.drawable.ic_pause_circle));
@@ -156,40 +219,6 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         _playSong(savedTracksAdapter.nextSong().track.uri);
     }
 
-    public void tryToRetrieveSavedTracks() {
-        final Activity activity = this;
-        SpotifyApi api = new SpotifyApi();
-        api.setAccessToken(PreferencesManager.getAccessToken(this));
-        SpotifyService spotify = api.getService();
-        HashMap<String, Object> options = new HashMap<>();
-        options.put("limit", 20);
-        spotify.getMySavedTracks(options, new SpotifyCallback<Pager<SavedTrack>>() {
-            @Override
-            public void success(Pager<SavedTrack> savedTrackPager, Response response) {
-                savedTracksAdapter = new SavedTracksAdapter(activity, savedTrackPager.items);
-                savedTracksRV.setLayoutManager(new LinearLayoutManager(activity, LinearLayout.VERTICAL, false));
-                savedTracksRV.setAdapter(savedTracksAdapter);
-                enablePlayer(true);
-            }
-
-            @Override
-            public void failure(SpotifyError error) {
-                Log.e(TAG, error.getMessage());
-            }
-        });
-    }
-
-    private void enablePlayer(boolean enable) {
-        enableButton(playButton, enable);
-        enableButton(prevButton, enable);
-        enableButton(nextButton, enable);
-    }
-
-    private void enableButton(ImageButton button, boolean enable) {
-        button.setEnabled(enable);
-        button.setAlpha(enable ? 1.0f : 0.3f);
-    }
-
     private void _playSong(String uri) {
         // This is the line that actually plays a song.
         mPlayer.playUri(null, uri, 0, 0);
@@ -197,6 +226,40 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
 
     public void pause() {
         mPlayer.pause(null);
+    }
+
+    private void setupPlayer(String accessToken) {
+        // retrieve saved tracks
+        tryToRetrieveSavedTracks();
+        // retrieve player
+        Config playerConfig = new Config(this, accessToken, CLIENT_ID);
+        Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(SpotifyPlayer spotifyPlayer) {
+                mPlayer = spotifyPlayer;
+                mPlayer.addConnectionStateCallback(MainActivity.this);
+                mPlayer.addNotificationCallback(MainActivity.this);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
+            }
+        });
+    }
+
+
+    /**
+     *
+     * LOGIN
+     *
+     */
+
+    private void openLogin() {
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+        builder.setScopes(new String[]{"user-read-private", "user-library-read", "streaming"});
+        AuthenticationRequest request = builder.build();
+        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
     @Override
@@ -207,30 +270,44 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                PreferencesManager.storeAccessToken(this, response.getAccessToken());
-                Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-                Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-                    @Override
-                    public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                        mPlayer = spotifyPlayer;
-                        mPlayer.addConnectionStateCallback(MainActivity.this);
-                        mPlayer.addNotificationCallback(MainActivity.this);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
-                    }
-                });
+                String accessToken = response.getAccessToken();
+                PreferencesManager.storeAccessToken(this, accessToken);
+                setupPlayer(accessToken);
             }
         }
     }
 
     @Override
-    protected void onDestroy() {
-        Spotify.destroyPlayer(this);
-        super.onDestroy();
+    public void onLoggedIn() {
+        Log.d("MainActivity", "User logged in");
     }
+
+    @Override
+    public void onLoggedOut() {
+        Log.d("MainActivity", "User logged out");
+    }
+
+    @Override
+    public void onLoginFailed(Error var1) {
+        Log.d("MainActivity", "Login failed");
+    }
+
+    @Override
+    public void onTemporaryError() {
+        Log.d("MainActivity", "Temporary error occurred");
+    }
+
+    @Override
+    public void onConnectionMessage(String message) {
+        Log.d("MainActivity", "Received connection message: " + message);
+    }
+
+
+    /**
+     *
+     * SPOTIFY CALLBACKS
+     *
+     */
 
     @Override
     public void onPlaybackEvent(PlayerEvent playerEvent) {
@@ -255,30 +332,4 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         }
     }
 
-    @Override
-    public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
-
-        tryToRetrieveSavedTracks();
-    }
-
-    @Override
-    public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
-    }
-
-    @Override
-    public void onLoginFailed(Error var1) {
-        Log.d("MainActivity", "Login failed");
-    }
-
-    @Override
-    public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
-    }
-
-    @Override
-    public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
-    }
 }
