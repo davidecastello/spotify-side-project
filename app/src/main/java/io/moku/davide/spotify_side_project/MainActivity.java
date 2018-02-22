@@ -181,6 +181,9 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
             @Override
             public void failure(SpotifyError error) {
                 Log.e(TAG, error.getMessage());
+                if (error.hasErrorDetails() && error.getErrorDetails().status == 401) {
+                    openLogin();
+                }
             }
         });
     }
