@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -59,6 +62,7 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
     @BindView(R.id.homepageTitle) HTextView title_part_1;
     @BindView(R.id.homepageTitle2) HTextView title_part_2;
     @BindViews({R.id.playerLayout, R.id.line2}) List<View> playerViews;
+    @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
 
     /* Fields */
     private Player mPlayer;
@@ -77,6 +81,9 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
 
         // disable player
         enablePlayer(false);
+
+        // setup BottomNavigationView
+        setupBottomNavigationView();
 
         String accessToken = PreferencesManager.getAccessToken(this);
         if (accessToken != null) {
@@ -155,6 +162,25 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         }
     }
 
+    public void setupBottomNavigationView() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.itemTracks:
+                        // code
+                        break;
+                    case R.id.itemOther:
+                        // code
+                        break;
+                    case R.id.itemProfile:
+                        // code
+                        break;
+                }
+                return true;
+            }
+        });
+    }
 
     /**
      *

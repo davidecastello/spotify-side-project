@@ -4,7 +4,7 @@
 
     <dimen name="player_play_button_width">48dp</dimen>
     <dimen name="player_play_button_height">@dimen/player_play_button_width</dimen>
-    <dimen name="player_play_button_side_margin">8dp</dimen>
+    <dimen name="player_play_button_side_margin">16dp</dimen>
 
     <dimen name="player_nav_button_width">24dp</dimen>
     <dimen name="player_nav_button_height">@dimen/player_nav_button_width</dimen>
