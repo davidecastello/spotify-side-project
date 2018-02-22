@@ -17,6 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Circle floating -->
         <com.github.glomadrian.grav.GravView
             android:id="@+id/grav"
             android:layout_centerInParent="true"
@@ -30,7 +31,6 @@
             app:gravGenerator="com.github.glomadrian.grav.generator.grav.BallGenerator"
             app:ball_size_from_size="3dp"
             app:ball_size_to_size="6dp"
-            app:animationGenerators="@array/path"
             app:path_variance_from="-10dp"
             app:path_variance_to="12dp"
             app:path="@string/circle"
@@ -38,7 +38,10 @@
             app:path_original_height="@integer/circle_original_height"
             app:path_min_duration="5000"
             app:path_max_duration="6000"
-            />
+
+            app:animationGenerators="@array/path" />
+        <!--Side-to-side floating
+            app:animationGenerators="@array/side_to_side_path"-->
 
         <TextView
             style="@style/homepage_title"
@@ -47,13 +50,13 @@
             android:visibility="invisible"
             android:text="@string/homepage_title" />
 
+        <!-- FADE -->
         <!--<com.hanks.htextview.fade.FadeTextView
             style="@style/homepage_title"
             android:id="@+id/homepageTitle"
             android:layout_centerVertical="true"
             android:layout_alignStart="@id/fake_title"
             app:animationDuration="1500"/>
-
         <com.hanks.htextview.fade.FadeTextView
             style="@style/homepage_title"
             android:id="@+id/homepageTitle2"
@@ -61,6 +64,7 @@
             android:layout_toEndOf="@id/homepageTitle"
             app:animationDuration="2000"/>-->
 
+        <!-- TYPER -->
         <com.hanks.htextview.typer.TyperTextView
             style="@style/homepage_title"
             android:id="@+id/homepageTitle"
@@ -68,7 +72,6 @@
             android:layout_alignStart="@id/fake_title"
             app:charIncrease="1"
             app:typerSpeed="180"/>
-
         <com.hanks.htextview.typer.TyperTextView
             style="@style/homepage_title"
             android:id="@+id/homepageTitle2"
@@ -152,5 +155,18 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_skip_next_black_24dp" />
     </RelativeLayout>
+
+    <!-- BottomNavigationView -->
+    <!--<android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:itemBackground="@color/white"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        app:menu="@menu/bottom_navigation_main"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>-->
 
 </android.support.constraint.ConstraintLayout>
