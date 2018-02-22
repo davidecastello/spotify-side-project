@@ -71,14 +71,16 @@
             android:layout_centerVertical="true"
             android:layout_alignStart="@id/fake_title"
             app:charIncrease="1"
-            app:typerSpeed="180"/>
+            app:typerSpeed="180"
+            tools:text="@string/homepage_title_part_1"/>
         <com.hanks.htextview.typer.TyperTextView
             style="@style/homepage_title"
             android:id="@+id/homepageTitle2"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/homepageTitle"
             app:charIncrease="1"
-            app:typerSpeed="180"/>
+            app:typerSpeed="180"
+            tools:text="@string/homepage_title_part_2"/>
 
     </RelativeLayout>
 
@@ -98,7 +100,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line"
         app:layout_constraintVertical_bias="0.0"
-        tools:itemCount="50" />
+        tools:itemCount="10"
+        tools:listitem="@layout/saved_track_cell_layout"/>
 
     <View
         android:id="@+id/line2"
@@ -160,12 +163,13 @@
             android:src="@drawable/ic_skip_next_black_24dp" />
     </RelativeLayout>
 
-    <View android:id="@+id/line3"
+    <View
+        android:id="@+id/line3"
         style="@style/line"
-        app:layout_constraintTop_toBottomOf="@id/playerLayout"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/playerLayout" />
 
     <!-- BottomNavigationView -->
     <android.support.design.widget.BottomNavigationView
