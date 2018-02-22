@@ -100,26 +100,27 @@
         app:layout_constraintVertical_bias="0.0"
         tools:itemCount="50" />
 
-    <View android:id="@+id/line2"
+    <View
+        android:id="@+id/line2"
         style="@style/line"
-        app:layout_constraintTop_toBottomOf="@id/savedTracksRV"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/playerLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toBottomOf="@id/savedTracksRV" />
 
     <RelativeLayout
         android:id="@+id/playerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/player_background"
+        android:padding="@dimen/player_padding"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/line3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line2"
-        android:padding="10dp"
-        android:visibility="gone">
+        app:layout_constraintTop_toBottomOf="@id/line2">
 
         <!-- PREV -->
         <ImageButton
@@ -139,12 +140,12 @@
             android:layout_width="@dimen/player_play_button_width"
             android:layout_height="@dimen/player_play_button_height"
             android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/player_play_button_side_margin"
+            android:layout_marginStart="@dimen/player_play_button_side_margin"
             android:background="@null"
             android:contentDescription="@string/app_name"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_play_circle"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"/>
+            android:src="@drawable/ic_play_circle" />
 
         <!-- NEXT -->
         <ImageButton
