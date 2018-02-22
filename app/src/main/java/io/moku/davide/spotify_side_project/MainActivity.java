@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.moku.davide.spotify_side_project.utils.preferences.PreferencesManager;
@@ -57,11 +58,13 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
     @BindView(R.id.savedTracksRV) RecyclerView savedTracksRV;
     @BindView(R.id.homepageTitle) HTextView title_part_1;
     @BindView(R.id.homepageTitle2) HTextView title_part_2;
+    @BindViews({R.id.playerLayout, R.id.line2}) List<View> playerViews;
 
     /* Fields */
     private Player mPlayer;
     private SavedTracksAdapter savedTracksAdapter;
     private boolean isPlaying = false;
+    private boolean isPlayerVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +146,15 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         }
     }
 
+    public void showPlayer() {
+        if (!isPlayerVisible) {
+            for (View view : playerViews) {
+                view.setVisibility(View.VISIBLE);
+            }
+            isPlayerVisible = true;
+        }
+    }
+
 
     /**
      *
@@ -220,6 +232,8 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
     }
 
     private void _playSong(String uri) {
+        // show the player
+        showPlayer();
         // This is the line that actually plays a song.
         mPlayer.playUri(null, uri, 0, 0);
     }
