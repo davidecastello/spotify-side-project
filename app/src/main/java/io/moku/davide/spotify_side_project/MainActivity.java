@@ -35,12 +35,14 @@ import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.moku.davide.spotify_side_project.network.NetworkManager;
 import io.moku.davide.spotify_side_project.utils.preferences.PreferencesManager;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyCallback;
 import kaaes.spotify.webapi.android.SpotifyError;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.SavedTrack;
 import retrofit.client.Response;
 
@@ -189,29 +191,48 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
      */
 
     public void tryToRetrieveSavedTracks() {
-        final Activity activity = this;
-        SpotifyApi api = new SpotifyApi();
-        api.setAccessToken(PreferencesManager.getAccessToken(this));
-        SpotifyService spotify = api.getService();
         HashMap<String, Object> options = new HashMap<>();
         options.put("limit", 20);
-        spotify.getMySavedTracks(options, new SpotifyCallback<Pager<SavedTrack>>() {
+        NetworkManager.getService(this).getMySavedTracks(options, new SpotifyCallback<Pager<SavedTrack>>() {
             @Override
             public void success(Pager<SavedTrack> savedTrackPager, Response response) {
-                savedTracksAdapter = new SavedTracksAdapter(activity, savedTrackPager.items);
-                savedTracksRV.setLayoutManager(new LinearLayoutManager(activity, LinearLayout.VERTICAL, false));
-                savedTracksRV.setAdapter(savedTracksAdapter);
-                enablePlayer(true);
+                savedTracksDownloaded(savedTrackPager.items);
             }
 
             @Override
             public void failure(SpotifyError error) {
-                Log.e(TAG, error.getMessage());
-                if (error.hasErrorDetails() && error.getErrorDetails().status == 401) {
-                    openLogin();
-                }
+                handleNetworkError(error);
             }
         });
+    }
+
+    public void savedTracksDownloaded(List<SavedTrack> savedTracks) {
+        savedTracksAdapter = new SavedTracksAdapter(this, savedTracks);
+        savedTracksRV.setLayoutManager(new LinearLayoutManager(this, LinearLayout.VERTICAL, false));
+        savedTracksRV.setAdapter(savedTracksAdapter);
+        enablePlayer(true);
+    }
+
+    // TODO: add a call to this method when the player is ready
+    public void tryToRetrievePlaylist() {
+        NetworkManager.getService(this).getPlaylist(Constants.MOKU_SHARED_USER, Constants.MOKU_SHARED_PLAYLIST, new SpotifyCallback<Playlist>() {
+            @Override
+            public void failure(SpotifyError spotifyError) {
+                handleNetworkError(spotifyError);
+            }
+
+            @Override
+            public void success(Playlist playlist, Response response) {
+                // TODO: look into playlist details
+            }
+        });
+    }
+
+    public void handleNetworkError(SpotifyError error) {
+        Log.e(TAG, error.getMessage());
+        if (error.hasErrorDetails() && error.getErrorDetails().status == 401) {
+            openLogin();
+        }
     }
 
 

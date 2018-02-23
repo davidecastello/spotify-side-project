@@ -12,4 +12,7 @@ public class Constants {
     public static final String CLIENT_ID = "9ecd6e858f1648f98a6f90589b866ee3";
 
     public static final String A_GOOD_SONG = "spotify:track:7safX55XidhznxK5eDdDm5";
+    public static final String MOKU_SHARED_USER = "1166723472";
+    public static final String MOKU_SHARED_PLAYLIST = "30JkHHYYGBcAE4gAnkxjcG";
+
 }
