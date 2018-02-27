@@ -46,8 +46,6 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
 
     /* Constants */
     public static final String TAG = MainActivity.class.getSimpleName();
-    private static final String CLIENT_ID = Constants.CLIENT_ID;
-    private static final String REDIRECT_URI = "spotifySideProject://callback";
     // Request code that will be used to verify if the result comes from correct activity
     private static final int REQUEST_CODE = 1337;
     public static final int SECONDS = 1000;
@@ -277,7 +275,7 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         // retrieve saved tracks
         tryToRetrieveSavedTracks();
         // retrieve player
-        Config playerConfig = new Config(this, accessToken, CLIENT_ID);
+        Config playerConfig = new Config(this, accessToken, Constants.CLIENT_ID);
         Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
             @Override
             public void onInitialized(SpotifyPlayer spotifyPlayer) {
@@ -301,7 +299,7 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
      */
 
     private void openLogin() {
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(Constants.CLIENT_ID, AuthenticationResponse.Type.TOKEN, Constants.SPOTIFY_REDIRECT_URI);
         builder.setScopes(new String[]{"user-read-private", "user-library-read", "streaming"});
         AuthenticationRequest request = builder.build();
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
