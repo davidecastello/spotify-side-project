@@ -7,13 +7,13 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_music_note_black_24dp" />
     <item
-        android:id="@+id/itemOther"
-        android:title="@string/other"
+        android:id="@+id/itemAlbum"
+        android:title="@string/album"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_see_more_black_24dp" />
+        android:icon="@drawable/ic_album_black_24dp" />
     <item
-        android:id="@+id/itemProfile"
-        android:title="@string/profile"
+        android:id="@+id/itemPlaylist"
+        android:title="@string/playlist"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_profile_black_24dp"/>
+        android:icon="@drawable/ic_playlist_black_24dp"/>
 </menu>

@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -37,12 +36,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.moku.davide.spotify_side_project.network.NetworkManager;
 import io.moku.davide.spotify_side_project.utils.preferences.PreferencesManager;
-import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyCallback;
 import kaaes.spotify.webapi.android.SpotifyError;
-import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Pager;
-import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.SavedTrack;
 import retrofit.client.Response;
 
@@ -172,10 +168,10 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
                     case R.id.itemTracks:
                         // code
                         break;
-                    case R.id.itemOther:
+                    case R.id.itemAlbum:
                         // code
                         break;
-                    case R.id.itemProfile:
+                    case R.id.itemPlaylist:
                         // code
                         break;
                 }
@@ -211,21 +207,6 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
         savedTracksRV.setLayoutManager(new LinearLayoutManager(this, LinearLayout.VERTICAL, false));
         savedTracksRV.setAdapter(savedTracksAdapter);
         enablePlayer(true);
-    }
-
-    // TODO: add a call to this method when the player is ready
-    public void tryToRetrievePlaylist() {
-        NetworkManager.getService(this).getPlaylist(Constants.MOKU_SHARED_USER, Constants.MOKU_SHARED_PLAYLIST, new SpotifyCallback<Playlist>() {
-            @Override
-            public void failure(SpotifyError spotifyError) {
-                handleNetworkError(spotifyError);
-            }
-
-            @Override
-            public void success(Playlist playlist, Response response) {
-                // TODO: look into playlist details
-            }
-        });
     }
 
     public void handleNetworkError(SpotifyError error) {
