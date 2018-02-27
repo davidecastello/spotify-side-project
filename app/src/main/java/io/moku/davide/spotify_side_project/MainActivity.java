@@ -57,8 +57,8 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
     @BindView(R.id.prevButton) ImageButton prevButton;
     @BindView(R.id.nextButton) ImageButton nextButton;
     @BindView(R.id.savedTracksRV) RecyclerView savedTracksRV;
-    @BindView(R.id.homepageTitle) HTextView title_part_1;
-    @BindView(R.id.homepageTitle2) HTextView title_part_2;
+    @BindView(R.id.homepageTitle) HTextView titlePart1;
+    @BindView(R.id.homepageTitle2) HTextView titlePart2;
     @BindViews({R.id.playerLayout, R.id.line2}) List<View> playerViews;
     @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
 
@@ -106,7 +106,7 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
      */
 
     public void showPartialTitle() {
-        title_part_1.animateText(getString(R.string.homepage_title_part_1));
+        titlePart1.animateText(getString(R.string.homepage_title_part_1));
         new CountDownTimer(3 * SECONDS, SECONDS) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -121,7 +121,7 @@ public class MainActivity extends Activity implements SpotifyPlayer.Notification
     }
 
     public void showFullTitle() {
-        title_part_2.animateText(getString(R.string.homepage_title_part_2));
+        titlePart2.animateText(getString(R.string.homepage_title_part_2));
     }
 
     private void enablePlayer(boolean enable) {
