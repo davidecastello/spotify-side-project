@@ -1,6 +1,5 @@
-package io.moku.davide.spotify_side_project
+package io.moku.davide.spotify_side_project.tracks
 
-import android.app.Activity
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -9,7 +8,8 @@ import android.view.ViewGroup
 import kaaes.spotify.webapi.android.models.SavedTrack
 import kotlinx.android.synthetic.main.saved_track_cell_layout.view.*
 import android.os.Build
-
+import io.moku.davide.spotify_side_project.MainActivity
+import io.moku.davide.spotify_side_project.R
 
 
 /**

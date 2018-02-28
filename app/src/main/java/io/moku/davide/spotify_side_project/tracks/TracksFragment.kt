@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
-import io.moku.davide.spotify_side_project.SavedTracksAdapter
 import io.moku.davide.spotify_side_project.network.NetworkManager
 import io.moku.davide.spotify_side_project.utils.CustomFragment
 import kaaes.spotify.webapi.android.SpotifyCallback

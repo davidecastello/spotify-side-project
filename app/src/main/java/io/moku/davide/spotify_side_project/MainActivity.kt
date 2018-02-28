@@ -1,23 +1,16 @@
 package io.moku.davide.spotify_side_project
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.support.design.widget.BottomNavigationView
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.Toast
 
-import com.hanks.htextview.base.HTextView
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
@@ -29,22 +22,11 @@ import com.spotify.sdk.android.player.PlayerEvent
 import com.spotify.sdk.android.player.Spotify
 import com.spotify.sdk.android.player.SpotifyPlayer
 
-import java.util.HashMap
-
-import butterknife.BindView
-import butterknife.BindViews
-import butterknife.ButterKnife
-import butterknife.OnClick
 import io.moku.davide.spotify_side_project.album.AlbumFragment
-import io.moku.davide.spotify_side_project.network.NetworkManager
 import io.moku.davide.spotify_side_project.playlist.PlaylistFragment
+import io.moku.davide.spotify_side_project.tracks.SavedTracksAdapter
 import io.moku.davide.spotify_side_project.tracks.TracksFragment
 import io.moku.davide.spotify_side_project.utils.preferences.PreferencesManager
-import kaaes.spotify.webapi.android.SpotifyCallback
-import kaaes.spotify.webapi.android.SpotifyError
-import kaaes.spotify.webapi.android.models.Pager
-import kaaes.spotify.webapi.android.models.SavedTrack
-import retrofit.client.Response
 
 import kotlinx.android.synthetic.main.activity_main.*
 
