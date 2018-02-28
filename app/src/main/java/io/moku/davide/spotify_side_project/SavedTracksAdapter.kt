@@ -88,12 +88,13 @@ class SavedTracksAdapter(val context: Context, var savedTracks: List<SavedTrack>
         return oldCurrentPosition
     }
 
+    class SavedTrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    /* Useful extensions */
     fun SavedTrack.id() : String = track.id
     fun SavedTrack.name() : String = track.name
     fun SavedTrack.uri() : String = track.uri
     fun SavedTrack.album() : String = track.album.name
     fun SavedTrack.artist() : String = track.artists.map { it -> it.name }.joinToString(separator = ", ")
     fun SavedTrack.artistsAndAlbum() : String = "${artist()} • ${album()}"
-
-    class SavedTrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }
