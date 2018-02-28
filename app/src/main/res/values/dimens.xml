@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--
+    PLAYER
+    -->
     <dimen name="player_padding">8dp</dimen>
-
+    <!--Player button-->
     <dimen name="player_play_button_width">48dp</dimen>
     <dimen name="player_play_button_height">@dimen/player_play_button_width</dimen>
     <dimen name="player_play_button_side_margin">16dp</dimen>
-
+    <!-- Prev/Next buttons-->
     <dimen name="player_nav_button_width">24dp</dimen>
     <dimen name="player_nav_button_height">@dimen/player_nav_button_width</dimen>
+
+    <!--
+    HOMEPAGE TITLE
+    -->
+    <dimen name="homepage_title_height">80dp</dimen>
 </resources>
