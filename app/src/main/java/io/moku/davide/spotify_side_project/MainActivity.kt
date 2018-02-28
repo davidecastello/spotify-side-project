@@ -5,10 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.view.ViewPager
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -32,7 +35,10 @@ import butterknife.BindView
 import butterknife.BindViews
 import butterknife.ButterKnife
 import butterknife.OnClick
+import io.moku.davide.spotify_side_project.album.AlbumFragment
 import io.moku.davide.spotify_side_project.network.NetworkManager
+import io.moku.davide.spotify_side_project.playlist.PlaylistFragment
+import io.moku.davide.spotify_side_project.tracks.TracksFragment
 import io.moku.davide.spotify_side_project.utils.preferences.PreferencesManager
 import kaaes.spotify.webapi.android.SpotifyCallback
 import kaaes.spotify.webapi.android.SpotifyError
@@ -42,7 +48,7 @@ import retrofit.client.Response
 
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : Activity(), Player.NotificationCallback, ConnectionStateCallback {
+class MainActivity : AppCompatActivity(), Player.NotificationCallback, ConnectionStateCallback {
 
     companion object {
         /* Constants */
@@ -57,6 +63,8 @@ class MainActivity : Activity(), Player.NotificationCallback, ConnectionStateCal
     private var savedTracksAdapter: SavedTracksAdapter? = null
     private var isPlaying = false
     private var isPlayerVisible = false
+    private var isLoginOpen = false
+    private var prevMenuItem : MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,14 +72,18 @@ class MainActivity : Activity(), Player.NotificationCallback, ConnectionStateCal
 
         // show title
         showPartialTitle()
-
         // disable player
         enablePlayer(false)
+        // setup view pager
+        setupViewPager()
+        // listeners
         setListeners()
+    }
 
-        // setup BottomNavigationView
-        setupBottomNavigationView()
+    override fun onResume() {
+        super.onResume()
 
+        // check token
         val accessToken = PreferencesManager.getAccessToken(this)
         if (accessToken != null) {
             setupPlayer(accessToken)
@@ -83,6 +95,56 @@ class MainActivity : Activity(), Player.NotificationCallback, ConnectionStateCal
     override fun onDestroy() {
         Spotify.destroyPlayer(this)
         super.onDestroy()
+    }
+
+    fun setupViewPager() {
+        val adapter = MainFragmentPagerAdapter(supportFragmentManager)
+        adapter.addFragments(listOf(
+                TracksFragment.newInstance(),
+                AlbumFragment.newInstance(),
+                PlaylistFragment.newInstance()))
+        viewpager.adapter = adapter
+        viewpager.setCurrentItem(0)
+    }
+
+
+
+    fun setListeners() {
+        playButton.setOnClickListener({ playButtonPressed() })
+        prevButton.setOnClickListener({ playSong(savedTracksAdapter!!.prevSong().track.uri) })
+        nextButton.setOnClickListener({ playSong(savedTracksAdapter!!.nextSong().track.uri) })
+        bottom_navigation.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.itemTracks -> {
+                    viewpager.setCurrentItem(0)
+                }
+                R.id.itemAlbum -> {
+                    viewpager.setCurrentItem(1)
+                }
+                R.id.itemPlaylist -> {
+                    viewpager.setCurrentItem(2)
+                }
+            }
+            false
+        }
+        viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                //
+            }
+            override fun onPageScrollStateChanged(state: Int) {
+                //
+            }
+            override fun onPageSelected(position: Int) {
+                if (prevMenuItem != null) {
+                    (prevMenuItem as MenuItem).setChecked(true)
+                } else {
+                    bottom_navigation.menu.getItem(0).setChecked(false)
+                }
+                Log.d(TAG, "onPageSelected: $position")
+                bottom_navigation.menu.getItem(position).setChecked(true)
+                prevMenuItem = bottom_navigation.menu.getItem(position)
+            }
+        })
     }
 
 
@@ -109,7 +171,7 @@ class MainActivity : Activity(), Player.NotificationCallback, ConnectionStateCal
         homepageTitle2.animateText(getString(R.string.homepage_title_part_2))
     }
 
-    private fun enablePlayer(enable: Boolean) {
+    fun enablePlayer(enable: Boolean) {
         enableButton(playButton, enable)
         enableButton(prevButton, enable)
         enableButton(nextButton, enable)
@@ -120,12 +182,6 @@ class MainActivity : Activity(), Player.NotificationCallback, ConnectionStateCal
         button?.alpha = if (enable) 1.0f else 0.3f
     }
 
-    fun setListeners() {
-        playButton.setOnClickListener({ playButtonPressed() })
-        prevButton.setOnClickListener({ playSong(savedTracksAdapter!!.prevSong().track.uri) })
-        nextButton.setOnClickListener({ playSong(savedTracksAdapter!!.nextSong().track.uri) })
-    }
-
     fun showPlayer() {
         if (!isPlayerVisible) {
             playerLayout.visibility = View.VISIBLE
@@ -134,53 +190,8 @@ class MainActivity : Activity(), Player.NotificationCallback, ConnectionStateCal
         }
     }
 
-    fun setupBottomNavigationView() {
-        bottom_navigation.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.itemTracks -> {
-                    // code
-                }
-                R.id.itemAlbum -> {
-                    // code
-                }
-                R.id.itemPlaylist -> {
-                    // code
-                }
-            }
-            true
-        }
-    }
-
-    /**
-     *
-     * NETWORK
-     *
-     */
-
-    fun tryToRetrieveSavedTracks() {
-        NetworkManager.getService(this).getMySavedTracks(mapOf(Pair("limit", 20)), object : SpotifyCallback<Pager<SavedTrack>>() {
-            override fun success(savedTrackPager: Pager<SavedTrack>, response: Response) {
-                savedTracksDownloaded(savedTrackPager.items)
-            }
-
-            override fun failure(error: SpotifyError) {
-                handleNetworkError(error)
-            }
-        })
-    }
-
-    fun savedTracksDownloaded(savedTracks: List<SavedTrack>) {
-        savedTracksAdapter = SavedTracksAdapter(this, savedTracks)
-        savedTracksRV.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        savedTracksRV.adapter = savedTracksAdapter
-        enablePlayer(true)
-    }
-
-    fun handleNetworkError(error: SpotifyError) {
-        Log.e(TAG, error.message)
-        if (error.hasErrorDetails() && error.errorDetails.status == 401) {
-            openLogin()
-        }
+    fun updateFragments() {
+        (viewpager.adapter as MainFragmentPagerAdapter).updateFragments()
     }
 
 
@@ -239,8 +250,6 @@ class MainActivity : Activity(), Player.NotificationCallback, ConnectionStateCal
     }
 
     private fun setupPlayer(accessToken: String) {
-        // retrieve saved tracks
-        tryToRetrieveSavedTracks()
         // retrieve player
         val playerConfig = Config(this, accessToken, Constants.CLIENT_ID)
         Spotify.getPlayer(playerConfig, this, object : SpotifyPlayer.InitializationObserver {
@@ -263,15 +272,22 @@ class MainActivity : Activity(), Player.NotificationCallback, ConnectionStateCal
      *
      */
 
-    private fun openLogin() {
-        val builder = AuthenticationRequest.Builder(Constants.CLIENT_ID, AuthenticationResponse.Type.TOKEN, Constants.SPOTIFY_REDIRECT_URI)
-        builder.setScopes(arrayOf("user-read-private", "user-library-read", "streaming"))
-        val request = builder.build()
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request)
+    public fun openLogin() {
+        if(!isLoginOpen) {
+            // LOCK LOGIN
+            isLoginOpen = true
+            // Open Login
+            val builder = AuthenticationRequest.Builder(Constants.CLIENT_ID, AuthenticationResponse.Type.TOKEN, Constants.SPOTIFY_REDIRECT_URI)
+            builder.setScopes(arrayOf("user-read-private", "user-library-read", "streaming"))
+            val request = builder.build()
+            AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent) {
         super.onActivityResult(requestCode, resultCode, intent)
+        // UNLOCK LOGIN
+        isLoginOpen = false
 
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {

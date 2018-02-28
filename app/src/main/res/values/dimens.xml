@@ -16,4 +16,16 @@
     HOMEPAGE TITLE
     -->
     <dimen name="homepage_title_height">80dp</dimen>
+
+    <!--
+    ALBUM
+    -->
+    <dimen name="album_cover_width">40dp</dimen>
+    <dimen name="album_cover_heigth">@dimen/album_cover_width</dimen>
+
+    <!--
+    PLAYLIST
+    -->
+    <dimen name="playlist_cover_width">40dp</dimen>
+    <dimen name="playlist_cover_heigth">@dimen/playlist_cover_width</dimen>
 </resources>

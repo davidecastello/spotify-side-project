@@ -87,21 +87,19 @@
     <View android:id="@+id/line"
         style="@style/line"
         app:layout_constraintTop_toBottomOf="@id/homepageTitleLayout"
-        app:layout_constraintBottom_toTopOf="@id/savedTracksRV"
+        app:layout_constraintBottom_toTopOf="@id/viewpager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/savedTracksRV"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/line2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line"
-        app:layout_constraintVertical_bias="0.0"
-        tools:itemCount="10"
-        tools:listitem="@layout/saved_track_cell_layout"/>
+        app:layout_constraintVertical_bias="0.0" />
 
     <View
         android:id="@+id/line2"
@@ -110,7 +108,7 @@
         app:layout_constraintBottom_toTopOf="@id/playerLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/savedTracksRV" />
+        app:layout_constraintTop_toBottomOf="@id/viewpager" />
 
     <RelativeLayout
         android:id="@+id/playerLayout"
