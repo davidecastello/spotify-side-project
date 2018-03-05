@@ -1,14 +1,22 @@
 package io.moku.davide.spotify_side_project.album
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
+import io.moku.davide.spotify_side_project.network.NetworkManager
 import io.moku.davide.spotify_side_project.utils.CustomFragment
-import kotlinx.android.synthetic.main.fragment_album.view.*
+import kaaes.spotify.webapi.android.SpotifyCallback
+import kaaes.spotify.webapi.android.SpotifyError
+import kaaes.spotify.webapi.android.models.Pager
+import kaaes.spotify.webapi.android.models.SavedAlbum
+import kotlinx.android.synthetic.main.fragment_album.*
+import retrofit.client.Response
 
 /**
  * Created by Davide Castello on 28/02/18.
@@ -17,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_album.view.*
  */
 class AlbumFragment : CustomFragment() {
 
-    // TODO ALBUM RV private var savedTracksAdapter: SavedTracksAdapter? = null
+    private var savedAlbumsAdapter: SavedAlbumsAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState:
     Bundle?): View? {
@@ -27,8 +35,10 @@ class AlbumFragment : CustomFragment() {
     }
 
     override fun updateView() {
-        // retrieve albums
-        //tryToRetrieveSavedTracks()
+        if (isAdded) {
+            // retrieve albums
+            tryToRetrieveAlbums()
+        }
     }
 
     companion object {
@@ -54,10 +64,10 @@ class AlbumFragment : CustomFragment() {
      *
      */
 
-    /*fun tryToRetrieveSavedTracks() {
-        NetworkManager.getService(context).getMySavedTracks(mapOf(Pair("limit", 20)), object : SpotifyCallback<Pager<SavedTrack>>() {
-            override fun success(savedTrackPager: Pager<SavedTrack>, response: Response) {
-                savedTracksDownloaded(savedTrackPager.items)
+    fun tryToRetrieveAlbums() {
+        NetworkManager.getService(context).getMySavedAlbums(mapOf(Pair("limit", 20)), object : SpotifyCallback<Pager<SavedAlbum>>() {
+            override fun success(savedAlbumPager: Pager<SavedAlbum>, response: Response) {
+                savedAlbumsDownloaded(savedAlbumPager.items)
             }
 
             override fun failure(error: SpotifyError) {
@@ -66,10 +76,10 @@ class AlbumFragment : CustomFragment() {
         })
     }
 
-    fun savedTracksDownloaded(savedTracks: List<SavedTrack>) {
-        savedTracksAdapter = SavedTracksAdapter(activity, savedTracks)
-        savedTracksRV.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
-        savedTracksRV.adapter = savedTracksAdapter
+    fun savedAlbumsDownloaded(savedAlbums: List<SavedAlbum>) {
+        savedAlbumsAdapter = SavedAlbumsAdapter(activity, savedAlbums)
+        savedAlbumsRV.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
+        savedAlbumsRV.adapter = savedAlbumsAdapter
         getMainActivity().enablePlayer(true)
     }
 
@@ -78,6 +88,6 @@ class AlbumFragment : CustomFragment() {
         if (error.hasErrorDetails() && error.errorDetails.status == 401) {
             getMainActivity().openLogin()
         }
-    }*/
+    }
 
 }

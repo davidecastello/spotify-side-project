@@ -40,7 +40,7 @@
                 android:layout_marginBottom="4dp"/>
 
             <TextView
-                android:id="@+id/playlistArtist"
+                android:id="@+id/playlistOwner"
                 style="@style/customTextViewsLight"
                 android:text="@string/example_playlist_owner"
                 android:maxLines="1"

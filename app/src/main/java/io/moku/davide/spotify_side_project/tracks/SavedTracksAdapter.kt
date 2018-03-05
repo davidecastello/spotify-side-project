@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.saved_track_cell_layout.view.*
 import android.os.Build
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
+import kaaes.spotify.webapi.android.models.TrackSimple
 
 
 /**
@@ -18,8 +19,6 @@ import io.moku.davide.spotify_side_project.R
  * Copyright © 2018 Moku S.r.l. All rights reserved.
  */
 class SavedTracksAdapter(val context: Context, var savedTracks: List<SavedTrack>) : RecyclerView.Adapter<SavedTracksAdapter.SavedTrackViewHolder>() {
-
-    var currentTrack : SavedTrack? = null
 
     override fun getItemCount(): Int = savedTracks.size
 
@@ -32,61 +31,34 @@ class SavedTracksAdapter(val context: Context, var savedTracks: List<SavedTrack>
         // update UI
         view?.trackTitle?.text = track.name()
         view?.trackArtistAndAlbum?.text = track.artistsAndAlbum()
-        val isCurrentTrack = track.id() == currentTrack?.id()
+        val isCurrentTrack = track.id() == mainActivity(context).currentTrack?.id
         val colorId : Int = if (isCurrentTrack) R.color.grey else R.color.white
         val color : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) context.getColor(colorId) else context.resources.getColor(colorId)
         view?.setBackgroundColor(color)
         // listeners
         view?.setOnClickListener { v -> run {
-            // replace current track
-            val oldCurrent = currentTrack
-            currentTrack = track
-            // update UI
-            notifyItemsChanged(pos1 = savedTracks.indexOf(oldCurrent), pos2 = savedTracks.indexOf(currentTrack as SavedTrack))
-            // play song
-            (v.context as MainActivity).playSong(currentTrack?.uri())
+            val a = mainActivity(v.context)
+            if (a.currentTrack?.id != track.id()) {
+                // update UI
+                val currentTrackUri = a.currentTrack?.uri
+                if (isSongInSavedTracks(currentTrackUri)) {
+                    notifyItemChanged(savedTracks.indexOf(getSongInSavedTracks(currentTrackUri)))
+                }
+                // clear queue and add all saved tracks if necessary
+                if (!a.isTrackCurrentlyInQueue(track.uri())) {
+                    a.clearAndAddToQueue(savedTracks.trackSimples())
+                }
+                // play the chosen song
+                a.playTrack(a.getTrackInQueue(track.uri()))
+                notifyItemChanged(savedTracks.indexOf(track))
+            }
         }}
     }
 
-    fun notifyItemsChanged(pos1 : Int, pos2 : Int) {
-        notifyItemChanged(pos1)
-        notifyItemChanged(pos2)
-    }
+    fun isSongInSavedTracks(uri: String?) = savedTracks.count { it.uri() == uri } > 0
+    fun getSongInSavedTracks(uri : String?) = savedTracks.filter { it.uri() == uri }.first()
 
-    fun prevSong() : SavedTrack {
-
-        val oldCurrentPosition = findSong(true, savedTracks.first())
-        val currentPosition : Int = savedTracks.indexOf(currentTrack as SavedTrack)
-        notifyItemsChanged(oldCurrentPosition, currentPosition)
-
-        return currentTrack as SavedTrack
-    }
-
-    fun nextSong() : SavedTrack {
-        
-        val oldCurrentPosition = findSong(false, savedTracks.last())
-        val currentPosition : Int = savedTracks.indexOf(currentTrack as SavedTrack)
-        notifyItemsChanged(oldCurrentPosition, currentPosition)
-
-        return currentTrack as SavedTrack
-    }
-
-    // updated the currentTrack property and returns the old current position
-    fun findSong(prev : Boolean, comparisonTrack : SavedTrack) : Int {
-        var oldCurrentPosition : Int = -1
-        if (currentTrack == null)
-            currentTrack = if (prev) savedTracks.last() else savedTracks.first()
-        else if (currentTrack == comparisonTrack) {
-            oldCurrentPosition = savedTracks.indexOf(comparisonTrack)
-            currentTrack = if (prev) savedTracks.last() else savedTracks.first()
-        } else {
-            oldCurrentPosition = savedTracks.indexOf(currentTrack as SavedTrack)
-            var p = savedTracks.indexOf(currentTrack as SavedTrack)
-            p = if (prev) p-1 else p+1
-            currentTrack = savedTracks.get(p)
-        }
-        return oldCurrentPosition
-    }
+    fun mainActivity(context: Context) : MainActivity = context as MainActivity
 
     class SavedTrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -97,4 +69,5 @@ class SavedTracksAdapter(val context: Context, var savedTracks: List<SavedTrack>
     fun SavedTrack.album() : String = track.album.name
     fun SavedTrack.artist() : String = track.artists.map { it -> it.name }.joinToString(separator = ", ")
     fun SavedTrack.artistsAndAlbum() : String = "${artist()} • ${album()}"
+    fun List<SavedTrack>.trackSimples() : List<TrackSimple> = map { it -> it.track as TrackSimple }
 }
