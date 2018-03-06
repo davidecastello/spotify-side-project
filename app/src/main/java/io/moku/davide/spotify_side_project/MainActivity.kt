@@ -100,14 +100,8 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
 
     fun setListeners() {
         playButton.setOnClickListener({ playButtonPressed() })
-        prevButton.setOnClickListener({
-            if (mPlayer?.playbackState?.positionMs!! < 1 * SECONDS) {
-                mPlayer?.seekToPosition(null, 0)
-            } else {
-                playTrack(prevSong())
-            }
-        })
-        nextButton.setOnClickListener({ playTrack(nextSong()) })
+        prevButton.setOnClickListener({ prev() })
+        nextButton.setOnClickListener({ next() })
         bottom_navigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.itemTracks -> {
@@ -243,6 +237,16 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
     fun pause() {
         mPlayer?.pause(null)
     }
+
+    fun prev() {
+        if (mPlayer?.playbackState?.positionMs!! < 1 * SECONDS) {
+            mPlayer?.seekToPosition(null, 0)
+        } else {
+            playTrack(prevSong())
+        }
+    }
+
+    fun next() = playTrack(nextSong())
 
     private fun setupPlayer(accessToken: String) {
         // retrieve player
@@ -414,7 +418,7 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         Log.d("MainActivity", "Playback event received: " + playerEvent.name)
         when (playerEvent) {
         // Handle event type as necessary
-            PlayerEvent.kSpPlaybackNotifyTrackDelivered -> playTrack(nextSong())
+            PlayerEvent.kSpPlaybackNotifyTrackDelivered -> next()
             else -> {
             }
         }
