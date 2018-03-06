@@ -414,7 +414,7 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         Log.d("MainActivity", "Playback event received: " + playerEvent.name)
         when (playerEvent) {
         // Handle event type as necessary
-            PlayerEvent.kSpPlaybackNotifyTrackDelivered -> playButtonPressed()
+            PlayerEvent.kSpPlaybackNotifyTrackDelivered -> playTrack(nextSong())
             else -> {
             }
         }
