@@ -26,7 +26,7 @@ class SavedPlaylistsAdapter(val context: Context, var savedPlaylists: List<Playl
         val playlist = savedPlaylists.get(position)
         val view = holder?.itemView
         // update UI
-        view?.playlistTitle?.text = playlist.name()
+        view?.playlistTitle?.text = playlist.name
         view?.playlistOwner?.text = playlist.owner()
         ImagesUtils.loadUrlIntoImageView(playlist.coverUrl(), view?.context, view?.playlistCover, R.drawable.ic_playlist_black_24dp, false)
     }
@@ -34,7 +34,6 @@ class SavedPlaylistsAdapter(val context: Context, var savedPlaylists: List<Playl
     class SavedPlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     /* Useful extensions */
-    fun PlaylistSimple.name() : String = name
     fun PlaylistSimple.owner() : String = String.format(context.getString(R.string.playlist_owner_format), owner.display_name)
     fun PlaylistSimple.coverUrl() : String = images.last().url
 }

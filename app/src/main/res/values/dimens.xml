@@ -4,13 +4,9 @@
     PLAYER
     -->
     <dimen name="player_padding">8dp</dimen>
-    <!--Player button-->
-    <dimen name="player_play_button_width">48dp</dimen>
-    <dimen name="player_play_button_height">@dimen/player_play_button_width</dimen>
-    <dimen name="player_play_button_side_margin">16dp</dimen>
-    <!-- Prev/Next buttons-->
-    <dimen name="player_nav_button_width">24dp</dimen>
-    <dimen name="player_nav_button_height">@dimen/player_nav_button_width</dimen>
+    <!-- Small player buttons: Expand, Play -->
+    <dimen name="small_player_button_width">32dp</dimen>
+    <dimen name="small_player_button_height">@dimen/small_player_button_width</dimen>
 
     <!--
     HOMEPAGE TITLE

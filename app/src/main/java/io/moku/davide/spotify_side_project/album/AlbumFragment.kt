@@ -48,7 +48,7 @@ class AlbumFragment : CustomFragment() {
     }
 
     override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
-        TODO("not implemented")
+        // TODO AlbumFragment.notifySongs()
     }
 
     companion object {

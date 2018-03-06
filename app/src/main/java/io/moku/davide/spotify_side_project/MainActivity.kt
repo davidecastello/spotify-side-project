@@ -3,12 +3,14 @@ package io.moku.davide.spotify_side_project
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 
 import com.spotify.sdk.android.authentication.AuthenticationClient
@@ -100,8 +102,8 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
 
     fun setListeners() {
         playButton.setOnClickListener({ playButtonPressed() })
-        prevButton.setOnClickListener({ prev() })
-        nextButton.setOnClickListener({ next() })
+        expandButton.setOnClickListener({ expandNowPlaying() })
+        currentTrackInfoLayout.setOnClickListener({ expandNowPlaying() })
         bottom_navigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.itemTracks -> {
@@ -162,8 +164,9 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
 
     fun enablePlayer(enable: Boolean) {
         enableButton(playButton, enable)
-        enableButton(prevButton, enable)
-        enableButton(nextButton, enable)
+        enableButton(expandButton, enable)
+        enableTextView(currentTrackTV, enable)
+        enableTextView(currentTrackArtistTV, enable)
     }
 
     private fun enableButton(button: ImageButton?, enable: Boolean) {
@@ -182,6 +185,21 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
     fun updateFragments() {
         (viewpager.adapter as MainFragmentPagerAdapter).updateFragments()
     }
+
+    fun expandNowPlaying() {
+        // TODO expandNowPlaying
+    }
+
+    fun enableTextView(textView: TextView?, enable: Boolean) {
+        textView?.alpha = if (enable) 1.0f else 0.3f
+    }
+
+    fun updatePlayerInfo() {
+        currentTrackTV.text = currentTrack?.name
+        currentTrackArtistTV.text = currentTrack?.artist()
+    }
+
+    fun TrackSimple.artist() : String = artists.map { it -> it.name }.joinToString(separator = ", ")
 
 
     /**
@@ -230,6 +248,8 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
     private fun _playSong(uri: String?) {
         // show the player
         showPlayer()
+        // update current track on player
+        updatePlayerInfo()
         // This is the line that actually plays a song.
         mPlayer?.playUri(null, uri, 0, 0)
     }

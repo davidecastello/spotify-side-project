@@ -36,7 +36,6 @@ class SavedAlbumsAdapter(val context: Context, var savedAlbums: List<SavedAlbum>
     class SavedAlbumViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     /* Useful extensions */
-    fun SavedAlbum.id() : String = album.id
     fun SavedAlbum.name() : String = album.name
     fun SavedAlbum.artist() : String = album.artists.map { it -> it.name }.joinToString(separator = ", ")
     fun SavedAlbum.coverUrl() : String = album.images.last().url
