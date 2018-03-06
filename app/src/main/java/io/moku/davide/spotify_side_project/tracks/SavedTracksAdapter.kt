@@ -43,7 +43,6 @@ class SavedTracksAdapter(val context: Context, var savedTracks: List<SavedTrack>
             a.whosPlaying = WhosPlaying.MY_TRACKS
             if (a.currentTrack?.id != track.id()) {
                 // update UI
-                val currentTrackUri = a.currentTrack?.uri
                 notifyItemChangedIfPresent(a.currentTrack?.uri)
                 // clear queue and add all saved tracks if necessary
                 if (!a.isTrackCurrentlyInQueue(track.uri())) {
