@@ -49,7 +49,7 @@ class PlaylistFragment : CustomFragment() {
     }
 
     override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
     }
 
     companion object {
