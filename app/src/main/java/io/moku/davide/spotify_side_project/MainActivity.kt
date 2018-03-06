@@ -31,6 +31,7 @@ import kaaes.spotify.webapi.android.models.Track
 import kaaes.spotify.webapi.android.models.TrackSimple
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.reflect.jvm.internal.impl.renderer.RenderingFormat
 
 class MainActivity : AppCompatActivity(), Player.NotificationCallback, ConnectionStateCallback {
 
@@ -40,6 +41,10 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         // Request code that will be used to verify if the result comes from correct activity
         private val REQUEST_CODE = 1337
         val SECONDS = 1000
+        // Tabs
+        val TAB_TRACKS = 0
+        val TAB_ALBUMS = 1
+        val TAB_PLAYLISTS = 2
     }
 
     /* Fields */
@@ -50,6 +55,7 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
     private var prevMenuItem : MenuItem? = null
     var queue: ArrayList<TrackSimple> = arrayListOf()
     var currentTrack : TrackSimple? = null
+    var whosPlaying : WhosPlaying? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +95,7 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
                 AlbumFragment.newInstance(),
                 PlaylistFragment.newInstance()))
         viewpager.adapter = adapter
-        viewpager.setCurrentItem(0)
+        viewpager.setCurrentItem(TAB_TRACKS)
     }
 
     fun setListeners() {
@@ -105,13 +111,13 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         bottom_navigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.itemTracks -> {
-                    viewpager.setCurrentItem(0)
+                    viewpager.setCurrentItem(TAB_TRACKS)
                 }
                 R.id.itemAlbum -> {
-                    viewpager.setCurrentItem(1)
+                    viewpager.setCurrentItem(TAB_ALBUMS)
                 }
                 R.id.itemPlaylist -> {
-                    viewpager.setCurrentItem(2)
+                    viewpager.setCurrentItem(TAB_PLAYLISTS)
                 }
             }
             false
@@ -270,19 +276,25 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
     }
 
     fun prevSong() : TrackSimple {
+        val oldCurrentTrack = currentTrack
 
-        val oldCurrentPosition = findSong(true, queue.first())
-        val currentPosition : Int = queue.indexOf(currentTrack as TrackSimple)
-        //TODO updateUI con qualcosa come notifyItemsChanged(oldCurrentPosition, currentPosition)
+        //val oldCurrentPosition = findSong(true, queue.first())
+        //val currentPosition : Int = queue.indexOf(currentTrack as TrackSimple)
+
+        updateCurrentTrack(true, queue.first())
+        notifyItemsChanged(oldCurrentTrack, currentTrack)
 
         return currentTrack as TrackSimple
     }
 
     fun nextSong() : TrackSimple {
+        val oldCurrentTrack = currentTrack
 
-        val oldCurrentPosition = findSong(false, queue.last())
-        val currentPosition : Int = queue.indexOf(currentTrack as TrackSimple)
-        //TODO updateUI con qualcosa come notifyItemsChanged(oldCurrentPosition, currentPosition)
+        //val oldCurrentPosition = findSong(false, queue.last())
+        //val currentPosition : Int = queue.indexOf(currentTrack as TrackSimple)
+
+        updateCurrentTrack(false, queue.last())
+        notifyItemsChanged(oldCurrentTrack, currentTrack)
 
         return currentTrack as TrackSimple
     }
@@ -304,11 +316,36 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         return oldCurrentPosition
     }
 
+    fun updateCurrentTrack(prev : Boolean, comparisonTrack : TrackSimple) {
+        if (currentTrack == null || currentTrack == comparisonTrack)
+            currentTrack = if (prev) queue.last() else queue.first()
+        else {
+            var p = queue.indexOf(currentTrack as TrackSimple)
+            p = if (prev) p-1 else p+1
+            currentTrack = queue.get(p)
+        }
+    }
+
     fun playTrack(track: TrackSimple) {
         val oldCurrent = currentTrack
         currentTrack = track
         //notifyItemsChanged(pos1 = queue.indexOf(oldCurrent), pos2 = queue.indexOf(currentTrack as TrackSimple))
         playSong(currentTrack?.uri)
+    }
+
+    fun notifyItemsChanged(oldCurrentTrack: TrackSimple?, currentTrack: TrackSimple?) {
+        if (needsUpdate()) {
+            (viewpager.adapter as MainFragmentPagerAdapter).getFragment(viewpager.currentItem).notifySongs(oldCurrentTrack, currentTrack)
+        }
+    }
+
+    fun needsUpdate() : Boolean {
+        when (viewpager.currentItem) {
+            TAB_TRACKS -> return whosPlaying == WhosPlaying.MY_TRACKS
+            TAB_ALBUMS -> return whosPlaying == WhosPlaying.MY_ALBUMS
+            TAB_PLAYLISTS -> return whosPlaying == WhosPlaying.MY_PLAYLISTS
+        }
+        return false
     }
 
     /**
@@ -392,4 +429,10 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         }*/
     }
 
+}
+
+enum class WhosPlaying {
+    MY_TRACKS,
+    MY_ALBUMS,
+    MY_PLAYLISTS
 }

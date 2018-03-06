@@ -16,6 +16,7 @@ import kaaes.spotify.webapi.android.SpotifyCallback
 import kaaes.spotify.webapi.android.SpotifyError
 import kaaes.spotify.webapi.android.models.Pager
 import kaaes.spotify.webapi.android.models.PlaylistSimple
+import kaaes.spotify.webapi.android.models.TrackSimple
 import kotlinx.android.synthetic.main.fragment_playlist.*
 import retrofit.client.Response
 
@@ -40,6 +41,15 @@ class PlaylistFragment : CustomFragment() {
             // retrieve playlists
             tryToRetrievePlaylists()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        savedPlaylistsAdapter?.notifyDataSetChanged()
+    }
+
+    override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     companion object {

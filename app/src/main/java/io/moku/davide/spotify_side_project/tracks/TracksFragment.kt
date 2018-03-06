@@ -15,6 +15,7 @@ import kaaes.spotify.webapi.android.SpotifyCallback
 import kaaes.spotify.webapi.android.SpotifyError
 import kaaes.spotify.webapi.android.models.Pager
 import kaaes.spotify.webapi.android.models.SavedTrack
+import kaaes.spotify.webapi.android.models.TrackSimple
 import kotlinx.android.synthetic.main.fragment_tracks.*
 import retrofit.client.Response
 
@@ -39,6 +40,16 @@ class TracksFragment : CustomFragment() {
             // retrieve saved tracks
             tryToRetrieveSavedTracks()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        savedTracksAdapter?.notifyDataSetChanged()
+    }
+
+    override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
+        savedTracksAdapter?.notifyItemChangedIfPresent(oldSong?.uri)
+        savedTracksAdapter?.notifyItemChangedIfPresent(currentSong?.uri)
     }
 
     companion object {

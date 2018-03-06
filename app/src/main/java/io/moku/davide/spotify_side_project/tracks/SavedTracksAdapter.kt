@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.saved_track_cell_layout.view.*
 import android.os.Build
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
+import io.moku.davide.spotify_side_project.WhosPlaying
 import kaaes.spotify.webapi.android.models.TrackSimple
 
 
@@ -38,12 +39,12 @@ class SavedTracksAdapter(val context: Context, var savedTracks: List<SavedTrack>
         // listeners
         view?.setOnClickListener { v -> run {
             val a = mainActivity(v.context)
+            // we are playing music from "My tracks"
+            a.whosPlaying = WhosPlaying.MY_TRACKS
             if (a.currentTrack?.id != track.id()) {
                 // update UI
                 val currentTrackUri = a.currentTrack?.uri
-                if (isSongInSavedTracks(currentTrackUri)) {
-                    notifyItemChanged(savedTracks.indexOf(getSongInSavedTracks(currentTrackUri)))
-                }
+                notifyItemChangedIfPresent(a.currentTrack?.uri)
                 // clear queue and add all saved tracks if necessary
                 if (!a.isTrackCurrentlyInQueue(track.uri())) {
                     a.clearAndAddToQueue(savedTracks.trackSimples())
@@ -57,6 +58,12 @@ class SavedTracksAdapter(val context: Context, var savedTracks: List<SavedTrack>
 
     fun isSongInSavedTracks(uri: String?) = savedTracks.count { it.uri() == uri } > 0
     fun getSongInSavedTracks(uri : String?) = savedTracks.filter { it.uri() == uri }.first()
+
+    fun notifyItemChangedIfPresent(uri: String?) {
+        if (isSongInSavedTracks(uri)) {
+            notifyItemChanged(savedTracks.indexOf(getSongInSavedTracks(uri)))
+        }
+    }
 
     fun mainActivity(context: Context) : MainActivity = context as MainActivity
 

@@ -19,6 +19,7 @@ class MainFragmentPagerAdapter(manager: FragmentManager) : FragmentPagerAdapter(
     fun addFragment(fragment: CustomFragment) = mFragmentList.add(fragment)
     fun addFragments(fragments: Collection<CustomFragment>) = mFragmentList.addAll(fragments)
     fun updateFragments() {
-        mFragmentList.forEach({ f -> f.updateView()})
+        mFragmentList.forEach({ f -> f.updateView() })
     }
+    fun getFragment(position: Int) : CustomFragment = if (position < mFragmentList.size) mFragmentList.get(position) else mFragmentList.last()
 }
