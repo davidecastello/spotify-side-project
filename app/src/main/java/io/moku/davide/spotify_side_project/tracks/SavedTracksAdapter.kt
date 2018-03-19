@@ -40,7 +40,7 @@ class SavedTracksAdapter(val context: Context, var savedTracks: List<SavedTrack>
         view?.setOnClickListener { v -> run {
             val a = mainActivity(v.context)
             // we are playing music from "My tracks"
-            a.whosPlaying = WhosPlaying.MY_TRACKS
+            a.setWhosPlaying(WhosPlaying.MY_TRACKS)
             if (a.currentTrack?.id != track.id()) {
                 // update UI
                 notifyItemChangedIfPresent(a.currentTrack?.uri)

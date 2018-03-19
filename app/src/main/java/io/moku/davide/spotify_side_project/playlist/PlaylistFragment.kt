@@ -1,7 +1,6 @@
 package io.moku.davide.spotify_side_project.playlist
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +10,7 @@ import android.widget.LinearLayout
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.network.NetworkManager
-import io.moku.davide.spotify_side_project.utils.CustomFragment
+import io.moku.davide.spotify_side_project.utils.fragments.CustomTabbedFragment
 import kaaes.spotify.webapi.android.SpotifyCallback
 import kaaes.spotify.webapi.android.SpotifyError
 import kaaes.spotify.webapi.android.models.Pager
@@ -25,15 +24,19 @@ import retrofit.client.Response
  * Project: spotify-side-project
  * Copyright © 2018 Moku S.r.l. All rights reserved.
  */
-class PlaylistFragment : CustomFragment() {
+class PlaylistFragment : CustomTabbedFragment() {
 
     private var savedPlaylistsAdapter: SavedPlaylistsAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState:
     Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_playlist, container, false)
+        return inflater.inflate(R.layout.fragment_playlist, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         updateView()
-        return view
     }
 
     override fun updateView() {

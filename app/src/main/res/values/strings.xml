@@ -48,6 +48,7 @@ C68.5809,277.075,273.832,71.8233,527.023,71.8233 Z
     <string name="example_playlist_name">My favorite songs of 2017</string>
     <string name="example_playlist_owner">di Davide Castello</string>
     <string name="playlist_owner_format">di %s</string>
+    <string name="now_playing">Now playing</string>
 
     <integer name="circle_original_width">1062</integer>
     <integer name="circle_original_height">1062</integer>

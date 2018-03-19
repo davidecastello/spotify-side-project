@@ -1,9 +1,8 @@
 package io.moku.davide.spotify_side_project
 
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import io.moku.davide.spotify_side_project.utils.CustomFragment
+import io.moku.davide.spotify_side_project.utils.fragments.CustomTabbedFragment
 
 /**
  * Created by Davide Castello on 28/02/18.
@@ -12,14 +11,14 @@ import io.moku.davide.spotify_side_project.utils.CustomFragment
  */
 class MainFragmentPagerAdapter(manager: FragmentManager) : FragmentPagerAdapter(manager) {
 
-    private val mFragmentList = ArrayList<CustomFragment>()
+    private val mFragmentList = ArrayList<CustomTabbedFragment>()
 
-    override fun getItem(position: Int): CustomFragment = mFragmentList.get(position)
+    override fun getItem(position: Int): CustomTabbedFragment = mFragmentList.get(position)
     override fun getCount(): Int = mFragmentList.size
-    fun addFragment(fragment: CustomFragment) = mFragmentList.add(fragment)
-    fun addFragments(fragments: Collection<CustomFragment>) = mFragmentList.addAll(fragments)
+    fun addFragment(fragment: CustomTabbedFragment) = mFragmentList.add(fragment)
+    fun addFragments(fragments: Collection<CustomTabbedFragment>) = mFragmentList.addAll(fragments)
     fun updateFragments() {
         mFragmentList.forEach({ f -> f.updateView() })
     }
-    fun getFragment(position: Int) : CustomFragment = if (position < mFragmentList.size) mFragmentList.get(position) else mFragmentList.last()
+    fun getFragment(position: Int) : CustomTabbedFragment = if (position < mFragmentList.size) mFragmentList.get(position) else mFragmentList.last()
 }

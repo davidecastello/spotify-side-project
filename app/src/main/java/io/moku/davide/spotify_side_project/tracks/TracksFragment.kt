@@ -10,7 +10,7 @@ import android.widget.LinearLayout
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.network.NetworkManager
-import io.moku.davide.spotify_side_project.utils.CustomFragment
+import io.moku.davide.spotify_side_project.utils.fragments.CustomTabbedFragment
 import kaaes.spotify.webapi.android.SpotifyCallback
 import kaaes.spotify.webapi.android.SpotifyError
 import kaaes.spotify.webapi.android.models.Pager
@@ -24,15 +24,19 @@ import retrofit.client.Response
  * Project: spotify-side-project
  * Copyright © 2018 Moku S.r.l. All rights reserved.
  */
-class TracksFragment : CustomFragment() {
+class TracksFragment : CustomTabbedFragment() {
 
     private var savedTracksAdapter: SavedTracksAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState:
     Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_tracks, container, false)
+        return inflater.inflate(R.layout.fragment_tracks, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         updateView()
-        return view
     }
 
     override fun updateView() {

@@ -2,15 +2,8 @@ package io.moku.davide.spotify_side_project
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.MenuItem
-import android.view.View
-import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
 
 import com.spotify.sdk.android.authentication.AuthenticationClient
@@ -23,54 +16,36 @@ import com.spotify.sdk.android.player.Player
 import com.spotify.sdk.android.player.PlayerEvent
 import com.spotify.sdk.android.player.Spotify
 import com.spotify.sdk.android.player.SpotifyPlayer
+import io.moku.davide.spotify_side_project.utils.fragments.CustomFragment
 
-import io.moku.davide.spotify_side_project.album.AlbumFragment
-import io.moku.davide.spotify_side_project.playlist.PlaylistFragment
-import io.moku.davide.spotify_side_project.tracks.SavedTracksAdapter
-import io.moku.davide.spotify_side_project.tracks.TracksFragment
+import io.moku.davide.spotify_side_project.utils.fragments.CustomTabbedFragment
 import io.moku.davide.spotify_side_project.utils.preferences.PreferencesManager
-import kaaes.spotify.webapi.android.models.Track
 import kaaes.spotify.webapi.android.models.TrackSimple
-
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.reflect.jvm.internal.impl.renderer.RenderingFormat
 
 class MainActivity : AppCompatActivity(), Player.NotificationCallback, ConnectionStateCallback {
 
     companion object {
-        /* Constants */
         val TAG = MainActivity::class.java.simpleName
+        val SECONDS = 1000
         // Request code that will be used to verify if the result comes from correct activity
         private val REQUEST_CODE = 1337
-        val SECONDS = 1000
-        // Tabs
-        val TAB_TRACKS = 0
-        val TAB_ALBUMS = 1
-        val TAB_PLAYLISTS = 2
     }
 
     /* Fields */
     var mPlayer: SpotifyPlayer? = null
-    private var isPlaying = false
-    private var isPlayerVisible = false
+    var isPlaying = false
+    private var isNowPlayingFragmentVisible = false
     private var isLoginOpen = false
-    private var prevMenuItem : MenuItem? = null
+
     var queue: ArrayList<TrackSimple> = arrayListOf()
     var currentTrack : TrackSimple? = null
-    var whosPlaying : WhosPlaying? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // show title
-        showPartialTitle()
-        // disable player
-        enablePlayer(false)
-        // setup view pager
-        setupViewPager()
-        // listeners
-        setListeners()
+        // Load MainFragment
+        loadMainFragment()
     }
 
     override fun onResume() {
@@ -90,117 +65,66 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         super.onDestroy()
     }
 
-    fun setupViewPager() {
-        val adapter = MainFragmentPagerAdapter(supportFragmentManager)
-        adapter.addFragments(listOf(
-                TracksFragment.newInstance(),
-                AlbumFragment.newInstance(),
-                PlaylistFragment.newInstance()))
-        viewpager.adapter = adapter
-        viewpager.setCurrentItem(TAB_TRACKS)
+    override fun onBackPressed() {
+        if (isNowPlayingFragmentVisible) {
+            toggleNowPlaying()
+        } else {
+            super.onBackPressed()
+        }
     }
 
-    fun setListeners() {
-        playButton.setOnClickListener({ playButtonPressed() })
-        expandButton.setOnClickListener({ expandNowPlaying() })
-        currentTrackInfoLayout.setOnClickListener({ expandNowPlaying() })
-        bottom_navigation.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.itemTracks -> {
-                    viewpager.setCurrentItem(TAB_TRACKS)
-                }
-                R.id.itemAlbum -> {
-                    viewpager.setCurrentItem(TAB_ALBUMS)
-                }
-                R.id.itemPlaylist -> {
-                    viewpager.setCurrentItem(TAB_PLAYLISTS)
-                }
-            }
-            false
+    fun updateView() {
+        val currentFragment = currentFragment()
+        if (currentFragment.isAdded && !currentFragment.isHidden) {
+            currentFragment.updateView()
         }
-        viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                //
-            }
-            override fun onPageScrollStateChanged(state: Int) {
-                //
-            }
-            override fun onPageSelected(position: Int) {
-                if (prevMenuItem != null) {
-                    (prevMenuItem as MenuItem).setChecked(true)
-                } else {
-                    bottom_navigation.menu.getItem(0).setChecked(false)
-                }
-                Log.d(TAG, "onPageSelected: $position")
-                bottom_navigation.menu.getItem(position).setChecked(true)
-                prevMenuItem = bottom_navigation.menu.getItem(position)
-            }
-        })
     }
 
 
     /**
      *
-     * UI
+     * FRAGMENTS
      *
      */
 
-    fun showPartialTitle() {
-        homepageTitle.animateText(getString(R.string.homepage_title_part_1))
-        object : CountDownTimer((3 * SECONDS).toLong(), SECONDS.toLong()) {
-            override fun onTick(millisUntilFinished: Long) {
-                //
-            }
+    fun currentFragment() : CustomFragment = supportFragmentManager.findFragmentByTag(currentTag()) as CustomFragment
 
-            override fun onFinish() {
-                showFullTitle()
-            }
-        }.start()
+    fun currentTag() = if (isNowPlayingFragmentVisible) NowPlayingFragment.TAG else MainFragment.TAG
+
+    fun loadMainFragment() {
+        supportFragmentManager.beginTransaction()
+                .add(R.id.container, MainFragment.newInstance(), MainFragment.TAG)
+                .commit()
     }
 
-    fun showFullTitle() {
-        homepageTitle2.animateText(getString(R.string.homepage_title_part_2))
+    fun showNowPlayingFragment() {
+        // Hide MainFragment
+        val mainFragment = supportFragmentManager.findFragmentByTag(MainFragment.TAG)
+        if (mainFragment.isAdded && !mainFragment.isHidden) {
+            supportFragmentManager.beginTransaction().hide(mainFragment).commit()
+        }
+        // Show NowPlayingFragment
+        supportFragmentManager.beginTransaction()
+                .add(R.id.container, NowPlayingFragment.newInstance(), NowPlayingFragment.TAG)
+                .addToBackStack(null)
+                .commit()
     }
 
-    fun enablePlayer(enable: Boolean) {
-        enableButton(playButton, enable)
-        enableButton(expandButton, enable)
-        enableTextView(currentTrackTV, enable)
-        enableTextView(currentTrackArtistTV, enable)
-    }
-
-    private fun enableButton(button: ImageButton?, enable: Boolean) {
-        button?.isEnabled = enable
-        button?.alpha = if (enable) 1.0f else 0.3f
-    }
-
-    fun showPlayer() {
-        if (!isPlayerVisible) {
-            playerLayout.visibility = View.VISIBLE
-            line2.visibility = View.VISIBLE
-            isPlayerVisible = true
+    fun hideNowPlayingFragment() {
+        // Hide NowPlayingFragment
+        supportFragmentManager.beginTransaction().remove(supportFragmentManager.findFragmentByTag(NowPlayingFragment.TAG)).commit()
+        // Show MainFragment
+        val mainFragment = supportFragmentManager.findFragmentByTag(MainFragment.TAG)
+        if (mainFragment.isAdded && mainFragment.isHidden) {
+            supportFragmentManager.beginTransaction().show(mainFragment).commit()
+            (mainFragment as CustomFragment).updateView()
         }
     }
 
-    fun updateFragments() {
-        (viewpager.adapter as MainFragmentPagerAdapter).updateFragments()
+    fun toggleNowPlaying() {
+        if (isNowPlayingFragmentVisible) hideNowPlayingFragment() else showNowPlayingFragment()
+        isNowPlayingFragmentVisible = !isNowPlayingFragmentVisible
     }
-
-    fun expandNowPlaying() {
-        // TODO expandNowPlaying
-    }
-
-    fun enableTextView(textView: TextView?, enable: Boolean) {
-        textView?.alpha = if (enable) 1.0f else 0.3f
-    }
-
-    fun updatePlayerInfo() {
-        currentTrackTV.text = currentTrack?.name
-        currentTrackArtistTV.text = currentTrack?.artist()
-    }
-
-    fun TrackSimple.artist() : String = artists.map { it -> it.name }.joinToString(separator = ", ")
-
 
     /**
      *
@@ -208,12 +132,10 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
      *
      */
 
-    fun playButtonPressed() {
+    fun _playButtonPressed() {
         if (isPlaying) {
-            playButton.setImageDrawable(getDrawable(R.drawable.ic_play_circle))
             pause()
         } else {
-            playButton.setImageDrawable(getDrawable(R.drawable.ic_pause_circle))
             resumeOrPlay()
         }
         isPlaying = !isPlaying
@@ -221,10 +143,17 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
 
     fun playSong(uri: String?) {
         if (!isPlaying) {
-            playButton.setImageDrawable(getDrawable(R.drawable.ic_pause_circle))
+            currentFragment().updatePlayButton()
             isPlaying = !isPlaying
         }
         _playSong(uri)
+    }
+
+    private fun _playSong(uri: String?) {
+        // update current track on player
+        currentFragment().updatePlayerInfo()
+        // This is the line that actually plays a song.
+        mPlayer?.playUri(null, uri, 0, 0)
     }
 
     fun resumeOrPlay() {
@@ -243,15 +172,6 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
 
     fun playSong() {
         mPlayer?.skipToNext(null)
-    }
-
-    private fun _playSong(uri: String?) {
-        // show the player
-        showPlayer()
-        // update current track on player
-        updatePlayerInfo()
-        // This is the line that actually plays a song.
-        mPlayer?.playUri(null, uri, 0, 0)
     }
 
     fun pause() {
@@ -291,7 +211,9 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
     }
 
     fun isTrackCurrentlyInQueue(trackUri : String) : Boolean = queue.count { it.uri == trackUri } > 0
+
     fun getTrackPositionInQueue(trackUri : String) : Int = queue.indexOf(queue.filter { it.uri == trackUri }.first())
+
     fun getTrackInQueue(trackUri : String) : TrackSimple = queue.filter { it.uri == trackUri }.first()
 
     fun clearAndAddToQueue(tracks: List<TrackSimple>) {
@@ -306,7 +228,7 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         //val currentPosition : Int = queue.indexOf(currentTrack as TrackSimple)
 
         updateCurrentTrack(true, queue.first())
-        notifyItemsChanged(oldCurrentTrack, currentTrack)
+        currentFragment().notifySongs(oldCurrentTrack, currentTrack)
 
         return currentTrack as TrackSimple
     }
@@ -318,7 +240,7 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         //val currentPosition : Int = queue.indexOf(currentTrack as TrackSimple)
 
         updateCurrentTrack(false, queue.last())
-        notifyItemsChanged(oldCurrentTrack, currentTrack)
+        currentFragment().notifySongs(oldCurrentTrack, currentTrack)
 
         return currentTrack as TrackSimple
     }
@@ -357,20 +279,16 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         playSong(currentTrack?.uri)
     }
 
-    fun notifyItemsChanged(oldCurrentTrack: TrackSimple?, currentTrack: TrackSimple?) {
-        if (needsUpdate()) {
-            (viewpager.adapter as MainFragmentPagerAdapter).getFragment(viewpager.currentItem).notifySongs(oldCurrentTrack, currentTrack)
+    fun enablePlayer(enable: Boolean) = currentFragment().enablePlayer(enable)
+
+    fun setWhosPlaying(whosPlaying: WhosPlaying) {
+        val current = currentFragment()
+        if (current is MainFragment) {
+            current.whosPlaying = whosPlaying
         }
     }
 
-    fun needsUpdate() : Boolean {
-        when (viewpager.currentItem) {
-            TAB_TRACKS -> return whosPlaying == WhosPlaying.MY_TRACKS
-            TAB_ALBUMS -> return whosPlaying == WhosPlaying.MY_ALBUMS
-            TAB_PLAYLISTS -> return whosPlaying == WhosPlaying.MY_PLAYLISTS
-        }
-        return false
-    }
+
 
     /**
      *
@@ -378,7 +296,7 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
      *
      */
 
-    public fun openLogin() {
+    fun openLogin() {
         if(!isLoginOpen) {
             // LOCK LOGIN
             isLoginOpen = true
@@ -402,7 +320,7 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
                 val accessToken = response.accessToken
                 PreferencesManager.storeAccessToken(this, accessToken)
                 setupPlayer(accessToken)
-                updateFragments()
+                updateView()
             }
         }
     }
