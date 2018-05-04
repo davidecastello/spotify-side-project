@@ -94,7 +94,6 @@ class PlaylistFragment : CustomTabbedFragment() {
         savedPlaylistsAdapter = SavedPlaylistsAdapter(activity, savedPlaylists)
         savedPlaylistRV.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
         savedPlaylistRV.adapter = savedPlaylistsAdapter
-        getMainActivity().enablePlayer(true)
     }
 
     fun handleNetworkError(error: SpotifyError) {

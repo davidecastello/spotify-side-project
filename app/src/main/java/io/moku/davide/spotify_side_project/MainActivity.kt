@@ -143,8 +143,8 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
 
     fun playSong(uri: String?) {
         if (!isPlaying) {
-            currentFragment().updatePlayButton()
             isPlaying = !isPlaying
+            currentFragment().updatePlayButton()
         }
         _playSong(uri)
     }
@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
     }
 
     fun prev() {
-        if (mPlayer?.playbackState?.positionMs!! < 1 * SECONDS) {
+        if (mPlayer?.playbackState?.positionMs!! > 2 * SECONDS) {
             mPlayer?.seekToPosition(null, 0)
         } else {
             playTrack(prevSong())
@@ -278,8 +278,6 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         //notifyItemsChanged(pos1 = queue.indexOf(oldCurrent), pos2 = queue.indexOf(currentTrack as TrackSimple))
         playSong(currentTrack?.uri)
     }
-
-    fun enablePlayer(enable: Boolean) = currentFragment().enablePlayer(enable)
 
     fun setWhosPlaying(whosPlaying: WhosPlaying) {
         val current = currentFragment()

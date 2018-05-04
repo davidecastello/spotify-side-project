@@ -124,7 +124,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line2">
 
-        <!-- PREV -->
+        <!-- EXPAND -->
         <ImageButton
             android:id="@+id/expandButton"
             android:layout_width="@dimen/small_player_button_width"

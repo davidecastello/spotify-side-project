@@ -13,5 +13,4 @@ abstract class CustomFragment : Fragment() {
     abstract fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?)
     abstract fun updatePlayerInfo()
     abstract fun updatePlayButton()
-    abstract fun enablePlayer(enable: Boolean)
 }

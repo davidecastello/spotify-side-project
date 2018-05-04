@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--
-    PLAYER
+    HOMEPAGE PLAYER
     -->
     <dimen name="player_padding">8dp</dimen>
     <!-- Small player buttons: Expand, Play -->
@@ -24,4 +24,16 @@
     -->
     <dimen name="playlist_cover_width">40dp</dimen>
     <dimen name="playlist_cover_heigth">@dimen/playlist_cover_width</dimen>
+    
+    
+    
+    <!--
+    NOW PLAYING PLAYER
+    -->
+    <dimen name="big_player_padding">12dp</dimen>
+    <dimen name="big_player_play_button_width">72dp</dimen>
+    <dimen name="big_player_play_button_height">@dimen/big_player_play_button_width</dimen>
+    <dimen name="big_player_play_button_side_margin">24dp</dimen>
+    <dimen name="big_player_nav_button_width">36dp</dimen>
+    <dimen name="big_player_nav_button_height">@dimen/big_player_nav_button_width</dimen>
 </resources>

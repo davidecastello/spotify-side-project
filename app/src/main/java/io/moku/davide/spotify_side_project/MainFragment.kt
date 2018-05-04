@@ -59,8 +59,6 @@ class MainFragment : CustomFragment() {
 
         // show title
         showPartialTitle()
-        // disable player
-        enablePlayer(false)
         // setup view pager
         setupViewPager()
         // listeners
@@ -69,7 +67,12 @@ class MainFragment : CustomFragment() {
 
     override fun updateView() {
         if (isAdded) {
+            // TODO FIXME: esci da NowPlaying, chiama MainFragment.updateView() e torna all'inizio della lista di savedTracks
+            // se sono già scaricate, update della view ma non scaricarle di nuovo e *tornare all'inizio della lista*
             (viewpager.adapter as MainFragmentPagerAdapter).updateFragments()
+
+            updatePlayerInfo()
+            updatePlayButton()
         }
     }
 
@@ -147,13 +150,6 @@ class MainFragment : CustomFragment() {
         homepageTitle2.animateText(getString(R.string.homepage_title_part_2))
     }
 
-    override fun enablePlayer(enable: Boolean) {
-        enableButton(playButton, enable)
-        enableButton(expandButton, enable)
-        enableTextView(currentTrackTV, enable)
-        enableTextView(currentTrackArtistTV, enable)
-    }
-
     private fun enableButton(button: ImageButton?, enable: Boolean) {
         button?.isEnabled = enable
         button?.alpha = if (enable) 1.0f else 0.3f
@@ -206,7 +202,11 @@ class MainFragment : CustomFragment() {
     }
 
     override fun updatePlayButton() {
-        playButton.setImageDrawable(getMainActivity().getDrawable(R.drawable.ic_pause_circle))
+        if (getMainActivity().isPlaying) {
+            playButton.setImageDrawable(getMainActivity().getDrawable(R.drawable.ic_pause_circle))
+        } else {
+            playButton.setImageDrawable(getMainActivity().getDrawable(R.drawable.ic_play_circle))
+        }
     }
 
 
