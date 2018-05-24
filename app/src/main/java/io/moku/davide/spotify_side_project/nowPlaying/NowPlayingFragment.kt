@@ -1,15 +1,13 @@
-package io.moku.davide.spotify_side_project
+package io.moku.davide.spotify_side_project.nowPlaying
 
 import android.os.Bundle
 import android.support.v4.view.ViewPager
-import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Interpolator
-import butterknife.OnPageChange
-import com.gigamole.infinitecycleviewpager.OnInfiniteCyclePageTransformListener
-import io.moku.davide.spotify_side_project.nowPlaying.ArtworksPagerAdapter
+import io.moku.davide.spotify_side_project.MainActivity
+import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.utils.fragments.CustomFragment
 import kaaes.spotify.webapi.android.models.TrackSimple
 import kotlinx.android.synthetic.main.fragment_now_playing.*

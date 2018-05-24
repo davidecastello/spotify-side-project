@@ -16,9 +16,9 @@ import com.spotify.sdk.android.player.Player
 import com.spotify.sdk.android.player.PlayerEvent
 import com.spotify.sdk.android.player.Spotify
 import com.spotify.sdk.android.player.SpotifyPlayer
+import io.moku.davide.spotify_side_project.nowPlaying.NowPlayingFragment
 import io.moku.davide.spotify_side_project.utils.fragments.CustomFragment
 
-import io.moku.davide.spotify_side_project.utils.fragments.CustomTabbedFragment
 import io.moku.davide.spotify_side_project.utils.preferences.PreferencesManager
 import kaaes.spotify.webapi.android.models.TrackSimple
 
