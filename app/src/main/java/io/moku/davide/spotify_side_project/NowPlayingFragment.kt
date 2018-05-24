@@ -1,11 +1,15 @@
 package io.moku.davide.spotify_side_project
 
 import android.os.Bundle
+import android.support.v4.view.ViewPager
+import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import butterknife.OnPageChange
+import com.gigamole.infinitecycleviewpager.OnInfiniteCyclePageTransformListener
+import io.moku.davide.spotify_side_project.nowPlaying.ArtworksPagerAdapter
 import io.moku.davide.spotify_side_project.utils.fragments.CustomFragment
-import io.moku.davide.spotify_side_project.utils.fragments.CustomTabbedFragment
 import kaaes.spotify.webapi.android.models.TrackSimple
 import kotlinx.android.synthetic.main.fragment_now_playing.*
 
@@ -49,13 +53,50 @@ class NowPlayingFragment : CustomFragment() {
 
     fun setup() {
         setListeners()
+        setupArtworksViewPager()
+        setArtworksPageListener()
     }
 
     fun setListeners() {
         nowPlayingTopLayout.setOnClickListener({ getMainActivity().toggleNowPlaying() })
         nowPlayingPlayButton.setOnClickListener({ playButtonPressed() })
-        nowPlayingPrevButton.setOnClickListener({ getMainActivity().prev() })
+        nowPlayingPrevButton.setOnClickListener({ getMainActivity().prev(true) })
         nowPlayingNextButton.setOnClickListener({ getMainActivity().next() })
+    }
+
+    fun setupArtworksViewPager() {
+        artworksViewPager.adapter = ArtworksPagerAdapter(getMainActivity())
+    }
+
+    fun setArtworksPageListener() {
+        artworksViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            /**
+             * This method will be invoked when a new page becomes selected.
+             * Animation is not necessarily complete.
+             * @param position Position index of the new selected page.
+             */
+            override fun onPageSelected(position: Int) {
+                // Listener to handle the swipe
+                val currentPosition = artworksViewPager.realItem
+                val currentTrackPosition = getMainActivity().getCurrentTrackPositionInQueue()
+                val last = getMainActivity().queue.size - 1
+                // Really important check to avoid loops: onPageSelected is called also when you
+                // update the artwork after the getMainActivity().next() or prev() method call
+                if (currentTrackPosition != currentPosition) {
+                    if (currentTrackPosition == last && currentPosition == 0) {
+                        getMainActivity().next()
+                    } else if (currentTrackPosition == 0 && currentPosition == last) {
+                        getMainActivity().prev(false)
+                    } else if (currentPosition > currentTrackPosition) {
+                        getMainActivity().next()
+                    } else {
+                        getMainActivity().prev(false)
+                    }
+                }
+            }
+        })
     }
 
     fun playButtonPressed() {
@@ -70,6 +111,10 @@ class NowPlayingFragment : CustomFragment() {
     fun _updateView() {
         updatePlayButton()
         updatePlayerInfo()
+    }
+
+    fun updateArtworksViewPager() {
+        artworksViewPager.setCurrentItem(artworksViewPager.adapter.getItemPosition(getMainActivity().currentTrack))
     }
 
     override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
@@ -90,6 +135,7 @@ class NowPlayingFragment : CustomFragment() {
         // updating its info
         nowPlayingCurrentTrackTV.text = getMainActivity().currentTrack?.name
         nowPlayingCurrentTrackArtistTV.text = getMainActivity().currentTrack?.artist()
+        updateArtworksViewPager()
     }
 
     fun TrackSimple.artist() : String = artists.map { it -> it.name }.joinToString(separator = ", ")

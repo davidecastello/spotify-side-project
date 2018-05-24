@@ -59,6 +59,8 @@ dependencies {
     compile 'com.github.glomadrian:Grav:1.1'
     // Picasso
     compile 'com.squareup.picasso:picasso:2.5.2'
+    // Infinite Cycle ViewPager
+    compile 'com.github.devlight:infinitecycleviewpager:1.0.2'
 
     /* Kotlin */
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"

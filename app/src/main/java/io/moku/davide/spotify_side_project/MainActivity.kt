@@ -178,8 +178,8 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         mPlayer?.pause(null)
     }
 
-    fun prev() {
-        if (mPlayer?.playbackState?.positionMs!! > 2 * SECONDS) {
+    fun prev(checkSeconds : Boolean) {
+        if (checkSeconds && mPlayer?.playbackState?.positionMs!! > 2 * SECONDS) {
             mPlayer?.seekToPosition(null, 0)
         } else {
             playTrack(prevSong())
@@ -213,6 +213,8 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
     fun isTrackCurrentlyInQueue(trackUri : String) : Boolean = queue.count { it.uri == trackUri } > 0
 
     fun getTrackPositionInQueue(trackUri : String) : Int = queue.indexOf(queue.filter { it.uri == trackUri }.first())
+
+    fun getCurrentTrackPositionInQueue() : Int = queue.indexOf(currentTrack)
 
     fun getTrackInQueue(trackUri : String) : TrackSimple = queue.filter { it.uri == trackUri }.first()
 
