@@ -6,6 +6,7 @@ import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Interpolator
 import butterknife.OnPageChange
 import com.gigamole.infinitecycleviewpager.OnInfiniteCyclePageTransformListener
 import io.moku.davide.spotify_side_project.nowPlaying.ArtworksPagerAdapter
@@ -66,6 +67,12 @@ class NowPlayingFragment : CustomFragment() {
 
     fun setupArtworksViewPager() {
         artworksViewPager.adapter = ArtworksPagerAdapter(getMainActivity())
+        artworksViewPager.interpolator = object : Interpolator {
+            private val FACTOR = 1.0f
+            override fun getInterpolation(input: Float): Float {
+                return (Math.pow(2.0, (-10.0f * input).toDouble()) * Math.sin((input - FACTOR / 4.0f) * (2.0f * Math.PI) / FACTOR) + 1.0f).toFloat()
+            }
+        }
     }
 
     fun setArtworksPageListener() {
