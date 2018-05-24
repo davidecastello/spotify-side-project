@@ -52,7 +52,7 @@
         app:icvp_max_page_scale="0.8"
         app:icvp_medium_scaled="true"
         app:icvp_min_page_scale="0.5"
-        app:icvp_min_page_scale_offset="5dp"
+        app:icvp_min_page_scale_offset="15dp"
         app:icvp_scroll_duration="500"
         app:layout_constraintTop_toBottomOf="@id/nowPlayingTopLayout"
         app:layout_constraintBottom_toTopOf="@id/nowPlayingCurrentTrackInfoLayout"/>
