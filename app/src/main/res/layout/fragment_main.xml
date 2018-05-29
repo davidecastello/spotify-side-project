@@ -12,14 +12,14 @@
         android:id="@+id/homepageTitleLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/homepage_title_height"
-        android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/line"
+        android:background="@color/fiordBlue"
+        app:layout_constraintBottom_toTopOf="@id/viewpager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- Circle floating -->
-        <com.github.glomadrian.grav.GravView
+        <!--<com.github.glomadrian.grav.GravView
             android:id="@+id/grav"
             android:layout_centerInParent="true"
             android:layout_width="match_parent"
@@ -40,16 +40,25 @@
             app:path_min_duration="5000"
             app:path_max_duration="6000"
 
-            app:animationGenerators="@array/path" />
+            app:animationGenerators="@array/path" />-->
         <!--Side-to-side floating
             app:animationGenerators="@array/side_to_side_path"-->
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/app_name"
+            android:textSize="28sp"
+            android:textColor="@color/white"
+            android:fontFamily="casual"/><!--sans-serif-condensed, casual, cursive-->
+
+        <!--<TextView
             style="@style/homepage_title"
             android:id="@+id/fake_title"
             android:layout_centerInParent="true"
             android:visibility="invisible"
-            android:text="@string/homepage_title" />
+            android:text="@string/homepage_title" />-->
 
         <!-- FADE -->
         <!--<com.hanks.htextview.fade.FadeTextView
@@ -66,7 +75,7 @@
             app:animationDuration="2000"/>-->
 
         <!-- TYPER -->
-        <com.hanks.htextview.typer.TyperTextView
+        <!--<com.hanks.htextview.typer.TyperTextView
             style="@style/homepage_title"
             android:id="@+id/homepageTitle"
             android:layout_centerVertical="true"
@@ -81,16 +90,16 @@
             android:layout_toEndOf="@id/homepageTitle"
             app:charIncrease="1"
             app:typerSpeed="180"
-            tools:text="@string/homepage_title_part_2"/>
+            tools:text="@string/homepage_title_part_2"/>-->
 
     </RelativeLayout>
 
-    <View android:id="@+id/line"
+    <!--<View android:id="@+id/line"
         style="@style/line"
         app:layout_constraintTop_toBottomOf="@id/homepageTitleLayout"
         app:layout_constraintBottom_toTopOf="@id/viewpager"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />-->
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
@@ -99,7 +108,7 @@
         app:layout_constraintBottom_toTopOf="@+id/line2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line"
+        app:layout_constraintTop_toBottomOf="@id/homepageTitleLayout"
         app:layout_constraintVertical_bias="0.0" />
 
     <View

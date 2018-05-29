@@ -57,8 +57,6 @@ class MainFragment : CustomFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // show title
-        showPartialTitle()
         // setup view pager
         setupViewPager()
         // listeners
@@ -130,23 +128,6 @@ class MainFragment : CustomFragment() {
      * UI
      *
      */
-
-    fun showPartialTitle() {
-        homepageTitle.animateText(getString(R.string.homepage_title_part_1))
-        object : CountDownTimer((3 * SECONDS).toLong(), SECONDS.toLong()) {
-            override fun onTick(millisUntilFinished: Long) {
-                //
-            }
-
-            override fun onFinish() {
-                showFullTitle()
-            }
-        }.start()
-    }
-
-    fun showFullTitle() {
-        homepageTitle2.animateText(getString(R.string.homepage_title_part_2))
-    }
 
     private fun enableButton(button: ImageButton?, enable: Boolean) {
         button?.isEnabled = enable
