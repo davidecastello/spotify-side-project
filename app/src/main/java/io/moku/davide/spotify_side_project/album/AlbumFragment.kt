@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import io.moku.davide.spotify_side_project.Constants
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.network.NetworkManager
@@ -18,6 +19,7 @@ import kaaes.spotify.webapi.android.models.SavedAlbum
 import kaaes.spotify.webapi.android.models.TrackSimple
 import kotlinx.android.synthetic.main.fragment_album.*
 import retrofit.client.Response
+import java.util.concurrent.CopyOnWriteArraySet
 
 /**
  * Created by Davide Castello on 28/02/18.
@@ -79,9 +81,27 @@ class AlbumFragment : CustomTabbedFragment() {
      */
 
     fun tryToRetrieveAlbums() {
-        NetworkManager.getService(context).getMySavedAlbums(mapOf(Pair("limit", 20)), object : SpotifyCallback<Pager<SavedAlbum>>() {
+        if (savedAlbumsAdapter != null) {
+            if (savedAlbumsRV.adapter != null) {
+                savedAlbumsAdapter?.notifyDataSetChanged()
+            } else {
+                initRecyclerView()
+            }
+        } else {
+            retrieveAlbumsFromNetwork(0)
+        }
+    }
+
+    fun retrieveAlbumsFromNetwork(currentOffsetMultiplier: Int) {
+        val limit = Constants.ALBUM_SINGLE_CALL_LIMIT
+        val currentOffset = currentOffsetMultiplier * limit
+        NetworkManager.getService(context).getMySavedAlbums(
+                mapOf(
+                        Pair(Constants.QUERY_PARAMETER_LIMIT, limit),
+                        Pair(Constants.QUERY_PARAMETER_OFFSET, currentOffset)),
+                object : SpotifyCallback<Pager<SavedAlbum>>() {
             override fun success(savedAlbumPager: Pager<SavedAlbum>, response: Response) {
-                savedAlbumsDownloaded(savedAlbumPager.items)
+                savedAlbumsDownloaded(savedAlbumPager, currentOffsetMultiplier)
             }
 
             override fun failure(error: SpotifyError) {
@@ -90,8 +110,28 @@ class AlbumFragment : CustomTabbedFragment() {
         })
     }
 
-    fun savedAlbumsDownloaded(savedAlbums: List<SavedAlbum>) {
-        savedAlbumsAdapter = SavedAlbumsAdapter(activity, savedAlbums)
+    fun savedAlbumsDownloaded(savedAlbumPager: Pager<SavedAlbum>, currentOffsetMultiplier: Int) {
+        if (isAdded) {
+            val limit = Constants.ALBUM_SINGLE_CALL_LIMIT
+            if (savedAlbumsAdapter == null) {
+                savedAlbumsAdapter = SavedAlbumsAdapter(activity, ArrayList())
+            }
+            savedAlbumsAdapter?.savedAlbums?.addAll(savedAlbumPager.items)
+            // notify the adapter that we added some albums to the list
+            savedAlbumsAdapter?.notifyItemRangeInserted(currentOffsetMultiplier * limit,
+                    savedAlbumPager.items.size)
+
+            if (savedAlbumsRV.adapter == null) {
+                initRecyclerView()
+            }
+            // retrieve more albums from the network
+            if (savedAlbumPager.next != null) {
+                retrieveAlbumsFromNetwork(currentOffsetMultiplier + 1)
+            }
+        }
+    }
+
+    fun initRecyclerView() {
         savedAlbumsRV.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
         savedAlbumsRV.adapter = savedAlbumsAdapter
     }

@@ -12,7 +12,13 @@ object Constants {
     val CLIENT_ID = "9ecd6e858f1648f98a6f90589b866ee3"
     val SPOTIFY_REDIRECT_URI = "spotifySideProject://callback"
 
-    val SAVED_TRACKS_SINGLE_CALL_LIMIT = 50;
+    val SAVED_TRACKS_SINGLE_CALL_LIMIT = 50
+    val ALBUM_SINGLE_CALL_LIMIT = 50
+    val PLAYLIST_SINGLE_CALL_LIMIT = 50
+
+    // Headers
+    val QUERY_PARAMETER_LIMIT = "limit"
+    val QUERY_PARAMETER_OFFSET = "offset"
 
     val A_GOOD_SONG = "spotify:track:7safX55XidhznxK5eDdDm5"
     val MOKU_SHARED_USER = "1166723472"

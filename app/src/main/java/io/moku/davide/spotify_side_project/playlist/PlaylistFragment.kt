@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import io.moku.davide.spotify_side_project.Constants
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.network.NetworkManager
@@ -79,19 +80,57 @@ class PlaylistFragment : CustomTabbedFragment() {
      */
 
     fun tryToRetrievePlaylists() {
-        NetworkManager.getService(context).getMyPlaylists(mapOf(Pair("limit", 20)), object : SpotifyCallback<Pager<PlaylistSimple>>() {
-            override fun success(savedPlaylistPager: Pager<PlaylistSimple>, response: Response) {
-                savedPlaylistsDownloaded(savedPlaylistPager.items)
+        if (savedPlaylistsAdapter != null) {
+            if (savedPlaylistRV.adapter != null) {
+                savedPlaylistsAdapter?.notifyDataSetChanged()
+            } else {
+                initRecyclerView()
             }
+        } else {
+            retrievePlaylistsFromNetwork(0)
+        }
+    }
 
-            override fun failure(error: SpotifyError) {
-                handleNetworkError(error)
-            }
+    fun retrievePlaylistsFromNetwork(currentOffsetMultiplier: Int) {
+        val limit = Constants.PLAYLIST_SINGLE_CALL_LIMIT
+        val currentOffset = currentOffsetMultiplier * limit
+        NetworkManager.getService(context).getMyPlaylists(
+                mapOf(
+                        Pair(Constants.QUERY_PARAMETER_LIMIT, limit),
+                        Pair(Constants.QUERY_PARAMETER_OFFSET, currentOffset)),
+                object : SpotifyCallback<Pager<PlaylistSimple>>() {
+                    override fun success(savedPlaylistPager: Pager<PlaylistSimple>, response: Response) {
+                        savedPlaylistsDownloaded(savedPlaylistPager, currentOffsetMultiplier)
+                    }
+
+                    override fun failure(error: SpotifyError) {
+                        handleNetworkError(error)
+                    }
         })
     }
 
-    fun savedPlaylistsDownloaded(savedPlaylists: List<PlaylistSimple>) {
-        savedPlaylistsAdapter = SavedPlaylistsAdapter(activity, savedPlaylists)
+    fun savedPlaylistsDownloaded(savedPlaylistPager: Pager<PlaylistSimple>, currentOffsetMultiplier: Int) {
+        if (isAdded) {
+            val limit = Constants.PLAYLIST_SINGLE_CALL_LIMIT
+            if (savedPlaylistsAdapter == null) {
+                savedPlaylistsAdapter = SavedPlaylistsAdapter(activity, ArrayList())
+            }
+            savedPlaylistsAdapter?.savedPlaylists?.addAll(savedPlaylistPager.items)
+            // notify the adapter that we added some albums to the list
+            savedPlaylistsAdapter?.notifyItemRangeInserted(currentOffsetMultiplier * limit,
+                    savedPlaylistPager.items.size)
+
+            if (savedPlaylistRV.adapter == null) {
+                initRecyclerView()
+            }
+            // retrieve more albums from the network
+            if (savedPlaylistPager.next != null) {
+                retrievePlaylistsFromNetwork(currentOffsetMultiplier + 1)
+            }
+        }
+    }
+
+    fun initRecyclerView() {
         savedPlaylistRV.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
         savedPlaylistRV.adapter = savedPlaylistsAdapter
     }

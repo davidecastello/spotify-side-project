@@ -97,8 +97,8 @@ class TracksFragment : CustomTabbedFragment() {
         val currentOffset = currentOffsetMultiplier * limit
         NetworkManager.getService(context).getMySavedTracks(
                 mapOf(
-                        Pair("limit", limit),
-                        Pair("offset", currentOffset)),
+                        Pair(Constants.QUERY_PARAMETER_LIMIT, limit),
+                        Pair(Constants.QUERY_PARAMETER_OFFSET, currentOffset)),
                 object : SpotifyCallback<Pager<SavedTrack>>() {
             override fun success(savedTrackPager: Pager<SavedTrack>, response: Response) {
                 savedTracksDownloaded(savedTrackPager, currentOffsetMultiplier)

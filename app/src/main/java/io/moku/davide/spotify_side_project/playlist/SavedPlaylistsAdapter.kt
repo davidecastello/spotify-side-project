@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.utils.assets.ImagesUtils
 import kaaes.spotify.webapi.android.models.PlaylistSimple
@@ -15,7 +16,7 @@ import kotlinx.android.synthetic.main.playlist_cell_layout.view.*
  * Project: spotify-side-project
  * Copyright © 2018 Moku S.r.l. All rights reserved.
  */
-class SavedPlaylistsAdapter(val context: Context, var savedPlaylists: List<PlaylistSimple>) : RecyclerView.Adapter<SavedPlaylistsAdapter.SavedPlaylistViewHolder>() {
+class SavedPlaylistsAdapter(val context: Context, var savedPlaylists: ArrayList<PlaylistSimple>) : RecyclerView.Adapter<SavedPlaylistsAdapter.SavedPlaylistViewHolder>() {
 
     override fun getItemCount(): Int = savedPlaylists.size
 
@@ -29,6 +30,10 @@ class SavedPlaylistsAdapter(val context: Context, var savedPlaylists: List<Playl
         view?.playlistTitle?.text = playlist.name
         view?.playlistOwner?.text = playlist.owner()
         ImagesUtils.loadUrlIntoImageView(playlist.coverUrl(), view?.context, view?.playlistCover, R.drawable.ic_playlist_black_24dp, false)
+        // listener
+        view?.setOnClickListener { v -> run {
+            //Toast.makeText(context, playlist.name, Toast.LENGTH_SHORT).show()
+        }}
     }
 
     class SavedPlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
