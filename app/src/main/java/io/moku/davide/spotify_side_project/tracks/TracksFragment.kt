@@ -26,6 +26,7 @@ import retrofit.client.Response
  */
 class TracksFragment : CustomTabbedFragment() {
 
+    private var savedTracks: List<SavedTrack>? = null
     private var savedTracksAdapter: SavedTracksAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState:
@@ -80,18 +81,23 @@ class TracksFragment : CustomTabbedFragment() {
      */
 
     fun tryToRetrieveSavedTracks() {
-        NetworkManager.getService(context).getMySavedTracks(mapOf(Pair("limit", 20)), object : SpotifyCallback<Pager<SavedTrack>>() {
-            override fun success(savedTrackPager: Pager<SavedTrack>, response: Response) {
-                savedTracksDownloaded(savedTrackPager.items)
-            }
+        if (savedTracks != null && savedTracksAdapter != null) {
+            (savedTracksAdapter as SavedTracksAdapter).notifyDataSetChanged()
+        } else {
+            NetworkManager.getService(context).getMySavedTracks(mapOf(Pair("limit", 20)), object : SpotifyCallback<Pager<SavedTrack>>() {
+                override fun success(savedTrackPager: Pager<SavedTrack>, response: Response) {
+                    savedTracksDownloaded(savedTrackPager.items)
+                }
 
-            override fun failure(error: SpotifyError) {
-                handleNetworkError(error)
-            }
-        })
+                override fun failure(error: SpotifyError) {
+                    handleNetworkError(error)
+                }
+            })
+        }
     }
 
     fun savedTracksDownloaded(savedTracks: List<SavedTrack>) {
+        this.savedTracks = savedTracks
         savedTracksAdapter = SavedTracksAdapter(activity, savedTracks)
         savedTracksRV.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
         savedTracksRV.adapter = savedTracksAdapter

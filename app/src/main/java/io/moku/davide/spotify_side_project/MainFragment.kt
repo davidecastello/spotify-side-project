@@ -67,8 +67,6 @@ class MainFragment : CustomFragment() {
 
     override fun updateView() {
         if (isAdded) {
-            // TODO FIXME: esci da NowPlaying, chiama MainFragment.updateView() e torna all'inizio della lista di savedTracks
-            // se sono già scaricate, update della view ma non scaricarle di nuovo e *tornare all'inizio della lista*
             (viewpager.adapter as MainFragmentPagerAdapter).updateFragments()
 
             updatePlayerInfo()
