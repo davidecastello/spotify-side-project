@@ -16,6 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:itemCount="10"
         tools:listitem="@layout/saved_track_cell_layout"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
 </android.support.constraint.ConstraintLayout>

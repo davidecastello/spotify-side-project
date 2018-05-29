@@ -14,6 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:itemCount="10"
-        tools:listitem="@layout/album_cell_layout" />
+        tools:listitem="@layout/album_cell_layout"
+        android:scrollbars="vertical"  />
 
 </android.support.constraint.ConstraintLayout>
