@@ -82,7 +82,11 @@ class TracksFragment : CustomTabbedFragment() {
 
     fun tryToRetrieveSavedTracks() {
         if (savedTracks != null && savedTracksAdapter != null) {
-            (savedTracksAdapter as SavedTracksAdapter).notifyDataSetChanged()
+            if (savedTracksRV.adapter != null) {
+                (savedTracksAdapter as SavedTracksAdapter).notifyDataSetChanged()
+            } else {
+                initRecyclerView()
+            }
         } else {
             NetworkManager.getService(context).getMySavedTracks(mapOf(Pair("limit", 20)), object : SpotifyCallback<Pager<SavedTrack>>() {
                 override fun success(savedTrackPager: Pager<SavedTrack>, response: Response) {
@@ -99,6 +103,10 @@ class TracksFragment : CustomTabbedFragment() {
     fun savedTracksDownloaded(savedTracks: List<SavedTrack>) {
         this.savedTracks = savedTracks
         savedTracksAdapter = SavedTracksAdapter(activity, savedTracks)
+        initRecyclerView()
+    }
+
+    fun initRecyclerView() {
         savedTracksRV.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
         savedTracksRV.adapter = savedTracksAdapter
     }
