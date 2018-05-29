@@ -19,7 +19,7 @@ import kaaes.spotify.webapi.android.models.TrackSimple
  * Project: spotify-side-project
  * Copyright © 2018 Moku S.r.l. All rights reserved.
  */
-class SavedTracksAdapter(val context: Context, var savedTracks: List<SavedTrack>) : RecyclerView.Adapter<SavedTracksAdapter.SavedTrackViewHolder>() {
+class SavedTracksAdapter(val context: Context, var savedTracks: ArrayList<SavedTrack>) : RecyclerView.Adapter<SavedTracksAdapter.SavedTrackViewHolder>() {
 
     override fun getItemCount(): Int = savedTracks.size
 
@@ -75,5 +75,5 @@ class SavedTracksAdapter(val context: Context, var savedTracks: List<SavedTrack>
     fun SavedTrack.album() : String = track.album.name
     fun SavedTrack.artist() : String = track.artists.map { it -> it.name }.joinToString(separator = ", ")
     fun SavedTrack.artistsAndAlbum() : String = "${artist()} • ${album()}"
-    fun List<SavedTrack>.trackSimples() : List<TrackSimple> = map { it -> it.track as TrackSimple }
+    fun ArrayList<SavedTrack>.trackSimples() : List<TrackSimple> = map { it -> it.track as TrackSimple }
 }

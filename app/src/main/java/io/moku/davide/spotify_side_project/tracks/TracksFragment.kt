@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import io.moku.davide.spotify_side_project.Constants
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.network.NetworkManager
@@ -26,7 +27,6 @@ import retrofit.client.Response
  */
 class TracksFragment : CustomTabbedFragment() {
 
-    private var savedTracks: List<SavedTrack>? = null
     private var savedTracksAdapter: SavedTracksAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState:
@@ -81,29 +81,54 @@ class TracksFragment : CustomTabbedFragment() {
      */
 
     fun tryToRetrieveSavedTracks() {
-        if (savedTracks != null && savedTracksAdapter != null) {
+        if (savedTracksAdapter != null) {
             if (savedTracksRV.adapter != null) {
-                (savedTracksAdapter as SavedTracksAdapter).notifyDataSetChanged()
+                savedTracksAdapter?.notifyDataSetChanged()
             } else {
                 initRecyclerView()
             }
         } else {
-            NetworkManager.getService(context).getMySavedTracks(mapOf(Pair("limit", 20)), object : SpotifyCallback<Pager<SavedTrack>>() {
-                override fun success(savedTrackPager: Pager<SavedTrack>, response: Response) {
-                    savedTracksDownloaded(savedTrackPager.items)
-                }
-
-                override fun failure(error: SpotifyError) {
-                    handleNetworkError(error)
-                }
-            })
+            retrieveSavedTracksFromNetwork(0)
         }
     }
 
-    fun savedTracksDownloaded(savedTracks: List<SavedTrack>) {
-        this.savedTracks = savedTracks
-        savedTracksAdapter = SavedTracksAdapter(activity, savedTracks)
-        initRecyclerView()
+    fun retrieveSavedTracksFromNetwork(currentOffsetMultiplier: Int) {
+        val limit = Constants.SAVED_TRACKS_SINGLE_CALL_LIMIT
+        val currentOffset = currentOffsetMultiplier * limit
+        NetworkManager.getService(context).getMySavedTracks(
+                mapOf(
+                        Pair("limit", limit),
+                        Pair("offset", currentOffset)),
+                object : SpotifyCallback<Pager<SavedTrack>>() {
+            override fun success(savedTrackPager: Pager<SavedTrack>, response: Response) {
+                savedTracksDownloaded(savedTrackPager, currentOffsetMultiplier)
+            }
+
+            override fun failure(error: SpotifyError) {
+                handleNetworkError(error)
+            }
+        })
+    }
+
+    fun savedTracksDownloaded(savedTrackPager: Pager<SavedTrack>, currentOffsetMultiplier: Int) {
+        if (isAdded) {
+            val limit = Constants.SAVED_TRACKS_SINGLE_CALL_LIMIT
+            if (savedTracksAdapter == null) {
+                savedTracksAdapter = SavedTracksAdapter(activity, ArrayList())
+            }
+            savedTracksAdapter?.savedTracks?.addAll(savedTrackPager.items)
+            // notify the adapter that we added some tracks to the list
+            savedTracksAdapter?.notifyItemRangeInserted(currentOffsetMultiplier * limit,
+                    savedTrackPager.items.size)
+
+            if (savedTracksRV.adapter == null) {
+                initRecyclerView()
+            }
+            // retrieve more tracks from the network
+            if (savedTrackPager.next != null) {
+                retrieveSavedTracksFromNetwork(currentOffsetMultiplier + 1)
+            }
+        }
     }
 
     fun initRecyclerView() {
