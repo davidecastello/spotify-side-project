@@ -11,4 +11,6 @@ import kaaes.spotify.webapi.android.models.TrackSimple
 abstract class CustomTabbedFragment : Fragment() {
     abstract fun updateView()
     abstract fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?)
+    abstract fun back()
+    abstract fun canHandleBack() : Boolean
 }

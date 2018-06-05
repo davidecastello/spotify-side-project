@@ -144,4 +144,10 @@ class AlbumListFragment : CustomTabbedFragment() {
         }
     }
 
+    override fun back() {
+        // do nothing for now
+    }
+
+    override fun canHandleBack() : Boolean = false
+
 }

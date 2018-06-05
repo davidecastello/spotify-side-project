@@ -79,7 +79,11 @@ class AlbumFragment : CustomTabbedFragment() {
         }
     }
 
-    // TODO intervenire su onBackPressed
+    override fun back() {
+        hideAlbumPageFragment()
+    }
+
+    override fun canHandleBack() : Boolean = isAlbumPageFragmentVisible
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState:
     Bundle?): View? {

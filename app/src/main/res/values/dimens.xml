@@ -24,9 +24,13 @@
     -->
     <dimen name="playlist_cover_width">40dp</dimen>
     <dimen name="playlist_cover_heigth">@dimen/playlist_cover_width</dimen>
-    
-    
-    
+
+
+    <dimen name="detail_backdrop_height">256dp</dimen>
+    <dimen name="card_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="list_item_avatar_size">40dp</dimen>
+
     <!--
     NOW PLAYING PLAYER
     -->

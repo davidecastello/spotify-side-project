@@ -188,6 +188,13 @@ class MainFragment : CustomFragment() {
         }
     }
 
+    fun back() {
+        (viewpager.adapter as MainFragmentPagerAdapter).getFragment(viewpager.currentItem).back()
+    }
+
+
+    fun canHandleBack() : Boolean = (viewpager.adapter as MainFragmentPagerAdapter).getFragment(viewpager.currentItem).canHandleBack()
+
 
 
 

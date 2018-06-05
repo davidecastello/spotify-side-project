@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
 
 import com.spotify.sdk.android.authentication.AuthenticationClient
@@ -66,10 +67,30 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
     }
 
     override fun onBackPressed() {
+        back()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                // Respond to the action bar's Up/Home button
+                back()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun back() {
         if (isNowPlayingFragmentVisible) {
             toggleNowPlaying()
         } else {
-            super.onBackPressed()
+            val main = currentFragment() as MainFragment
+            if (main.canHandleBack()) {
+                main.back()
+            } else {
+                super.onBackPressed()
+            }
         }
     }
 

@@ -1,12 +1,15 @@
 package io.moku.davide.spotify_side_project.album
 
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toolbar
 import io.moku.davide.spotify_side_project.Constants
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
+import io.moku.davide.spotify_side_project.utils.assets.ImagesUtils
 import io.moku.davide.spotify_side_project.utils.fragments.CustomTabbedFragment
 import kaaes.spotify.webapi.android.models.Album
 import kaaes.spotify.webapi.android.models.SavedAlbum
@@ -30,13 +33,21 @@ class AlbumPageFragment : CustomTabbedFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         album = arguments.get(ALBUM) as Album
         setListeners()
         updateView()
     }
 
+    override fun onDestroyView() {
+        (activity as AppCompatActivity).setSupportActionBar(null)
+        super.onDestroyView()
+    }
+
     fun setListeners() {
-        albumPageBackButton.setOnClickListener({ (parentFragment as AlbumFragment).hideAlbumPageFragment() })
+        //albumPageBackButton.setOnClickListener({ (parentFragment as AlbumFragment).hideAlbumPageFragment() })
     }
 
     override fun updateView() {
@@ -48,6 +59,9 @@ class AlbumPageFragment : CustomTabbedFragment() {
             album?.durationInMins()
             album?.year()
             album?.tracks?.items
+
+            collapsing_toolbar.title = album?.name
+            ImagesUtils.loadUrlIntoImageView(album?.coverUrl(), context, backdrop, R.drawable.ic_album_white_24dp, false)
         }
     }
 
@@ -59,6 +73,12 @@ class AlbumPageFragment : CustomTabbedFragment() {
     override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
         // TODO AlbumPageFragment.notifySongs()
     }
+
+    override fun back() {
+        // do nothing for now
+    }
+
+    override fun canHandleBack() : Boolean = false
 
     companion object {
 
