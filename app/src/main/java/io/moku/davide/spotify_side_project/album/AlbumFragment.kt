@@ -14,10 +14,10 @@ import io.moku.davide.spotify_side_project.network.NetworkManager
 import io.moku.davide.spotify_side_project.utils.fragments.CustomTabbedFragment
 import kaaes.spotify.webapi.android.SpotifyCallback
 import kaaes.spotify.webapi.android.SpotifyError
+import kaaes.spotify.webapi.android.models.Album
 import kaaes.spotify.webapi.android.models.Pager
 import kaaes.spotify.webapi.android.models.SavedAlbum
 import kaaes.spotify.webapi.android.models.TrackSimple
-import kotlinx.android.synthetic.main.fragment_album.*
 import retrofit.client.Response
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -28,7 +28,58 @@ import java.util.concurrent.CopyOnWriteArraySet
  */
 class AlbumFragment : CustomTabbedFragment() {
 
-    private var savedAlbumsAdapter: SavedAlbumsAdapter? = null
+    /* Fields */
+    private var isAlbumPageFragmentVisible = false
+
+    /**
+     *
+     * FRAGMENTS
+     *
+     */
+
+    fun currentFragment() : CustomTabbedFragment = childFragmentManager.findFragmentByTag(currentTag()) as CustomTabbedFragment
+
+    fun currentTag() = if (isAlbumPageFragmentVisible) AlbumPageFragment.TAG else AlbumListFragment.TAG
+
+    fun loadAlbumListFragment() {
+        childFragmentManager.beginTransaction()
+                .add(R.id.albumContainer, AlbumListFragment.newInstance(), AlbumListFragment.TAG)
+                .commit()
+    }
+
+    fun showAlbumPageFragment(album: Album) {
+        if (!isAlbumPageFragmentVisible) {
+            isAlbumPageFragmentVisible = true
+            // Hide AlbumListFragment
+            val albumListFragment = childFragmentManager.findFragmentByTag(AlbumListFragment.TAG)
+            if (albumListFragment.isAdded && !albumListFragment.isHidden) {
+                childFragmentManager.beginTransaction().hide(albumListFragment).commit()
+            }
+            // Show AlbumPageFragment
+            childFragmentManager.beginTransaction()
+                    .add(R.id.albumContainer, AlbumPageFragment.newInstance(album), AlbumPageFragment.TAG)
+                    .addToBackStack(null)
+                    .commit()
+        }
+    }
+
+    fun hideAlbumPageFragment() {
+        if (isAlbumPageFragmentVisible) {
+            isAlbumPageFragmentVisible = false
+            // Hide AlbumPageFragment
+            childFragmentManager.beginTransaction()
+                    .remove(childFragmentManager.findFragmentByTag(AlbumPageFragment.TAG))
+                    .commit()
+            // Show AlbumListFragment
+            val albumListFragment = childFragmentManager.findFragmentByTag(AlbumListFragment.TAG)
+            if (albumListFragment.isAdded && albumListFragment.isHidden) {
+                childFragmentManager.beginTransaction().show(albumListFragment).commit()
+                (albumListFragment as CustomTabbedFragment).updateView()
+            }
+        }
+    }
+
+    // TODO intervenire su onBackPressed
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState:
     Bundle?): View? {
@@ -38,23 +89,25 @@ class AlbumFragment : CustomTabbedFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        updateView()
+        loadAlbumListFragment()
     }
 
     override fun updateView() {
         if (isAdded) {
-            // retrieve albums
-            tryToRetrieveAlbums()
+            val currentFragment = currentFragment()
+            if (currentFragment.isAdded && !currentFragment.isHidden) {
+                currentFragment.updateView()
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        savedAlbumsAdapter?.notifyDataSetChanged()
     }
 
     override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
         // TODO AlbumFragment.notifySongs()
+        // switch currentfragment.notifySongs()
     }
 
     companion object {
@@ -73,74 +126,5 @@ class AlbumFragment : CustomTabbedFragment() {
     }
 
     fun getMainActivity() : MainActivity = activity as MainActivity
-
-    /**
-     *
-     * NETWORK
-     *
-     */
-
-    fun tryToRetrieveAlbums() {
-        if (savedAlbumsAdapter != null) {
-            if (savedAlbumsRV.adapter != null) {
-                savedAlbumsAdapter?.notifyDataSetChanged()
-            } else {
-                initRecyclerView()
-            }
-        } else {
-            retrieveAlbumsFromNetwork(0)
-        }
-    }
-
-    fun retrieveAlbumsFromNetwork(currentOffsetMultiplier: Int) {
-        val limit = Constants.ALBUM_SINGLE_CALL_LIMIT
-        val currentOffset = currentOffsetMultiplier * limit
-        NetworkManager.getService(context).getMySavedAlbums(
-                mapOf(
-                        Pair(Constants.QUERY_PARAMETER_LIMIT, limit),
-                        Pair(Constants.QUERY_PARAMETER_OFFSET, currentOffset)),
-                object : SpotifyCallback<Pager<SavedAlbum>>() {
-            override fun success(savedAlbumPager: Pager<SavedAlbum>, response: Response) {
-                savedAlbumsDownloaded(savedAlbumPager, currentOffsetMultiplier)
-            }
-
-            override fun failure(error: SpotifyError) {
-                handleNetworkError(error)
-            }
-        })
-    }
-
-    fun savedAlbumsDownloaded(savedAlbumPager: Pager<SavedAlbum>, currentOffsetMultiplier: Int) {
-        if (isAdded) {
-            val limit = Constants.ALBUM_SINGLE_CALL_LIMIT
-            if (savedAlbumsAdapter == null) {
-                savedAlbumsAdapter = SavedAlbumsAdapter(activity, ArrayList())
-            }
-            savedAlbumsAdapter?.savedAlbums?.addAll(savedAlbumPager.items)
-            // notify the adapter that we added some albums to the list
-            savedAlbumsAdapter?.notifyItemRangeInserted(currentOffsetMultiplier * limit,
-                    savedAlbumPager.items.size)
-
-            if (savedAlbumsRV.adapter == null) {
-                initRecyclerView()
-            }
-            // retrieve more albums from the network
-            if (savedAlbumPager.next != null) {
-                retrieveAlbumsFromNetwork(currentOffsetMultiplier + 1)
-            }
-        }
-    }
-
-    fun initRecyclerView() {
-        savedAlbumsRV.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
-        savedAlbumsRV.adapter = savedAlbumsAdapter
-    }
-
-    fun handleNetworkError(error: SpotifyError) {
-        Log.e(TAG, error.message)
-        if (error.hasErrorDetails() && error.errorDetails.status == 401) {
-            getMainActivity().openLogin()
-        }
-    }
 
 }

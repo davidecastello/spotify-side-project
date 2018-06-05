@@ -20,6 +20,9 @@ object Constants {
     val QUERY_PARAMETER_LIMIT = "limit"
     val QUERY_PARAMETER_OFFSET = "offset"
 
+    val SECONDS = 1000
+    val MINUTES = 60
+
     val A_GOOD_SONG = "spotify:track:7safX55XidhznxK5eDdDm5"
     val MOKU_SHARED_USER = "1166723472"
     val MOKU_SHARED_PLAYLIST = "30JkHHYYGBcAE4gAnkxjcG"

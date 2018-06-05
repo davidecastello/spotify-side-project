@@ -29,7 +29,8 @@
             android:background="@null"
             android:contentDescription="@string/app_name"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+            android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+            android:clickable="false"/>
 
         <!-- Now Playing text -->
         <TextView

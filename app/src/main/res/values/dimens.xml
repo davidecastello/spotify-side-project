@@ -36,4 +36,11 @@
     <dimen name="big_player_play_button_side_margin">24dp</dimen>
     <dimen name="big_player_nav_button_width">36dp</dimen>
     <dimen name="big_player_nav_button_height">@dimen/big_player_nav_button_width</dimen>
+
+
+    <!--
+    ALBUM PAGE
+    -->
+    <dimen name="back_button_width">48dp</dimen>
+    <dimen name="back_button_height">@dimen/back_button_width</dimen>
 </resources>

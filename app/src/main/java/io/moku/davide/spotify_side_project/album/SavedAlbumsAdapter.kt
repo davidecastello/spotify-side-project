@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import io.moku.davide.spotify_side_project.Constants
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.utils.assets.ImagesUtils
@@ -18,7 +19,7 @@ import kotlinx.android.synthetic.main.album_cell_layout.view.*
  * Project: spotify-side-project
  * Copyright © 2018 Moku S.r.l. All rights reserved.
  */
-class SavedAlbumsAdapter(val context: Context, var savedAlbums: ArrayList<SavedAlbum>) : RecyclerView.Adapter<SavedAlbumsAdapter.SavedAlbumViewHolder>() {
+class SavedAlbumsAdapter(val context: Context, var parentFragment: AlbumFragment, var savedAlbums: ArrayList<SavedAlbum>) : RecyclerView.Adapter<SavedAlbumsAdapter.SavedAlbumViewHolder>() {
 
     override fun getItemCount(): Int = savedAlbums.size
 
@@ -31,10 +32,10 @@ class SavedAlbumsAdapter(val context: Context, var savedAlbums: ArrayList<SavedA
         // update UI
         view?.albumTitle?.text = album.name()
         view?.albumArtist?.text = album.artist()
-        ImagesUtils.loadUrlIntoImageView(album.coverUrl(), view?.context, view?.albumCover, R.drawable.ic_album_black_24dp, false)
+        ImagesUtils.loadUrlIntoImageView(album.smallCoverUrl(), view?.context, view?.albumCover, R.drawable.ic_album_black_24dp, false)
         // listener
         view?.setOnClickListener { v -> run {
-            //Toast.makeText(context, album.name(), Toast.LENGTH_SHORT).show()
+            parentFragment.showAlbumPageFragment(album.album)
         }}
     }
 
@@ -43,5 +44,5 @@ class SavedAlbumsAdapter(val context: Context, var savedAlbums: ArrayList<SavedA
     /* Useful extensions */
     fun SavedAlbum.name() : String = album.name
     fun SavedAlbum.artist() : String = album.artists.map { it -> it.name }.joinToString(separator = ", ")
-    fun SavedAlbum.coverUrl() : String = album.images.last().url
+    fun SavedAlbum.smallCoverUrl() : String = album.images.last().url
 }
