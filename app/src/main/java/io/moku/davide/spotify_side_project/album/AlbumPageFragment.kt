@@ -15,6 +15,7 @@ import kaaes.spotify.webapi.android.models.Album
 import kaaes.spotify.webapi.android.models.SavedAlbum
 import kaaes.spotify.webapi.android.models.TrackSimple
 import kotlinx.android.synthetic.main.fragment_album_page.*
+import java.util.*
 
 /**
  * Created by Davide Castello on 30/05/18.
@@ -33,35 +34,34 @@ class AlbumPageFragment : CustomTabbedFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         album = arguments.get(ALBUM) as Album
         setListeners()
         updateView()
     }
 
     override fun onDestroyView() {
-        (activity as AppCompatActivity).setSupportActionBar(null)
         super.onDestroyView()
     }
 
     fun setListeners() {
-        //albumPageBackButton.setOnClickListener({ (parentFragment as AlbumFragment).hideAlbumPageFragment() })
+        albumPageBackButton.setOnClickListener({ (parentFragment as AlbumFragment).hideAlbumPageFragment() })
+        albumPlayButton.setOnClickListener({
+            // TODO play full album - just like the click on the first song
+        })
     }
 
     override fun updateView() {
         if (isAdded) {
-            // TODO create the UI and update it with:
-            album?.name
-            album?.artist()
-            album?.coverUrl()
-            album?.durationInMins()
-            album?.year()
-            album?.tracks?.items
-
-            collapsing_toolbar.title = album?.name
-            ImagesUtils.loadUrlIntoImageView(album?.coverUrl(), context, backdrop, R.drawable.ic_album_white_24dp, false)
+            // Album info
+            albumTitle.text = album?.name
+            albumArtist.text = album?.artist()
+            albumYear.text = album?.year()
+            albumDuration.text = String.format(Locale.getDefault(), getString(R.string.album_duration), album?.durationInMins())
+            // Album images
+            ImagesUtils.loadUrlIntoImageView(album?.coverUrl(), context, albumCover, R.drawable.ic_album_white_24dp, false)
+            ImagesUtils.loadUrlIntoImageView(album?.coverUrl(), context, albumCoverBackground, R.drawable.ic_album_white_24dp, false)
+            // Album tracks
+            // TODO RecyclerView + Adapter using: album?.tracks?.items
         }
     }
 
@@ -103,6 +103,6 @@ class AlbumPageFragment : CustomTabbedFragment() {
     fun Album.smallCoverUrl() : String = images.last().url
     fun Album.coverUrl() : String = images.first().url
     fun Album.durationInSecs() : Int = (tracks.items.map { it -> it.duration_ms }.sum() / Constants.SECONDS).toInt()
-    fun Album.durationInMins() : Int = durationInSecs() / Constants.SECONDS
+    fun Album.durationInMins() : Int = durationInSecs() / Constants.MINUTES
     fun Album.year() : String = release_date.substringBefore("-")
 }

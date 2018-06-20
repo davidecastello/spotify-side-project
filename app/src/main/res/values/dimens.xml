@@ -45,6 +45,6 @@
     <!--
     ALBUM PAGE
     -->
-    <dimen name="back_button_width">48dp</dimen>
+    <dimen name="back_button_width">40dp</dimen>
     <dimen name="back_button_height">@dimen/back_button_width</dimen>
 </resources>

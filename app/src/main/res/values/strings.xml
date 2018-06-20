@@ -27,6 +27,14 @@ C273.832,988.707,68.5809,783.455,68.5809,530.265
 C68.5809,277.075,273.832,71.8233,527.023,71.8233 Z
   </string>
 
+    <string name="cheese_ipsum">Jarlsberg lancashire edam. Dolcelatte hard cheese brie st. agur blue
+    cheese caerphilly bavarian bergkase cheese and biscuits mascarpone. Cheeseburger swiss bavarian
+    bergkase cream cheese fromage frais cheesy feet port-salut airedale. St. agur blue cheese rubber
+    cheese caerphilly cheddar cheesecake cream cheese manchego lancashire. Roquefort squirty cheese
+    the big cheese.</string>
+
+    <integer name="circle_original_width">1062</integer>
+    <integer name="circle_original_height">1062</integer>
 
 
     <!-- App -->
@@ -39,27 +47,20 @@ C68.5809,277.075,273.832,71.8233,527.023,71.8233 Z
     <string name="homepage_title_part_1">Gucci</string>
     <string name="homepage_title_part_2">Fy</string>
 
-    <string name="tracks">Brani</string>
-    <string name="other">Altro</string>
-    <string name="profile">Profilo</string>
-    <string name="album">Album</string>
-    <string name="playlist">Playlist</string>
+    <string name="tracks">Tracks</string>
+    <string name="album">Albums</string>
+    <string name="playlist">Playlists</string>
     <string name="example_track_name">Aqualung</string>
     <string name="example_album_and_artist">Jethro Tull • Aqualung</string>
     <string name="example_album_name">Aqualung</string>
+    <string name="example_album_year">2002</string>
+    <string name="example_album_duration">55 min</string>
+    <string name="album_duration">%d min</string>
     <string name="example_artist">Jethro Tull</string>
     <string name="example_playlist_name">My favorite songs of 2017</string>
-    <string name="example_playlist_owner">di Davide Castello</string>
-    <string name="playlist_owner_format">di %s</string>
+    <string name="example_playlist_owner">by Davide Castello</string>
+    <string name="playlist_owner_format">by %s</string>
     <string name="now_playing">Now playing</string>
+    <string name="play">Play</string>
 
-    <integer name="circle_original_width">1062</integer>
-    <integer name="circle_original_height">1062</integer>
-
-
-    <string name="cheese_ipsum">Jarlsberg lancashire edam. Dolcelatte hard cheese brie st. agur blue
-    cheese caerphilly bavarian bergkase cheese and biscuits mascarpone. Cheeseburger swiss bavarian
-    bergkase cream cheese fromage frais cheesy feet port-salut airedale. St. agur blue cheese rubber
-    cheese caerphilly cheddar cheesecake cream cheese manchego lancashire. Roquefort squirty cheese
-    the big cheese.</string>
 </resources>
