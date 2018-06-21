@@ -309,6 +309,15 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
         }
     }
 
+    fun getWhosPlaying() : WhosPlaying? {
+        val current = currentFragment()
+        if (current is MainFragment) {
+            return current.whosPlaying
+        } else {
+            return null
+        }
+    }
+
 
 
     /**

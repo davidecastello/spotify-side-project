@@ -55,7 +55,7 @@ class AlbumListFragment : CustomTabbedFragment() {
     }
 
     override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
-        // TODO AlbumListFragment.notifySongs()
+        // do nothing
     }
 
     companion object {

@@ -110,8 +110,12 @@ class AlbumFragment : CustomTabbedFragment() {
     }
 
     override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
-        // TODO AlbumFragment.notifySongs()
-        // switch currentfragment.notifySongs()
+        if (isAdded) {
+            val currentFragment = currentFragment()
+            if (currentFragment.isAdded && !currentFragment.isHidden) {
+                currentFragment.notifySongs(oldSong, currentSong)
+            }
+        }
     }
 
     companion object {

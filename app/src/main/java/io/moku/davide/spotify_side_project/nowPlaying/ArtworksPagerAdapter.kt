@@ -26,9 +26,14 @@ class ArtworksPagerAdapter(var mainActivity: MainActivity) : PagerAdapter() {
         return view
     }
     fun setupItem(view: View?, trackSimple: TrackSimple) {
-        val images = (trackSimple as Track).album.images
-        val coverUrl = images.first().url
-        ImagesUtils.loadUrlIntoImageView(coverUrl, view?.context, view?.albumCover, R.drawable.ic_album_white_24dp, false)
+        // TODO: 3. utilizzare sempre Track, in modo da poter recuperare le info dell'album
+        if (trackSimple is Track) {
+            val images = trackSimple.album.images
+            val coverUrl = images.first().url
+            ImagesUtils.loadUrlIntoImageView(coverUrl, view?.context, view?.albumCover, R.drawable.ic_album_white_24dp, false)
+        } else {
+            view?.albumCover?.setImageResource(R.drawable.ic_album_black_24dp)
+        }
     }
     override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view!!.equals(`object`)
     override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {

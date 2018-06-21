@@ -39,28 +39,49 @@ class SavedTracksAdapter(val context: Context, var savedTracks: ArrayList<SavedT
         // listeners
         view?.setOnClickListener { v -> run {
             val a = mainActivity(v.context)
-            // we are playing music from "My tracks"
+            val oldWhosPlaying = a.getWhosPlaying()
+            val isAlreadyPlayingThisTrack : Boolean = a.currentTrack?.id == track.id()
+
+            // set who's playing: we are playing music from "My tracks"
             a.setWhosPlaying(WhosPlaying.MY_TRACKS)
-            if (a.currentTrack?.id != track.id()) {
-                // update UI
-                notifyItemChangedIfPresent(a.currentTrack?.uri)
-                // clear queue and add all saved tracks if necessary
-                if (!a.isTrackCurrentlyInQueue(track.uri())) {
-                    a.clearAndAddToQueue(savedTracks.trackSimples())
+
+            if (oldWhosPlaying == null) {
+                proceed(track, a, true)
+            } else {
+                if (oldWhosPlaying != WhosPlaying.MY_TRACKS) {
+                    // TODO: 2. a.tryToUpdateUIinOldWhosPlaying
+                    proceed(track, a, true)
+                } else {
+                    if (!isAlreadyPlayingThisTrack) {
+                        // update UI
+                        notifyItemChangedIfPresent(a.currentTrack?.uri)
+                        // proceed
+                        proceed(track, a, shouldResetQueue = !a.isTrackCurrentlyInQueue(track.uri()))
+                    } else {
+                        // we are already in "My tracks", the user is tapping on the song
+                        // that is already playing
+                    }
                 }
-                // play the chosen song
-                a.playTrack(a.getTrackInQueue(track.uri()))
-                notifyItemChanged(savedTracks.indexOf(track))
             }
         }}
     }
 
+    fun proceed(track: SavedTrack, a: MainActivity, shouldResetQueue: Boolean) {
+        // clear queue and add all saved tracks if necessary
+        if (shouldResetQueue) {
+            a.clearAndAddToQueue(savedTracks.trackSimples())
+        }
+        // play the chosen song
+        a.playTrack(a.getTrackInQueue(track.uri()))
+        notifyItemChanged(savedTracks.indexOf(track))
+    }
+
     fun isSongInSavedTracks(uri: String?) = savedTracks.count { it.uri() == uri } > 0
-    fun getSongInSavedTracks(uri : String?) = savedTracks.filter { it.uri() == uri }.first()
+    fun getSongFromSavedTracks(uri : String?) = savedTracks.filter { it.uri() == uri }.first()
 
     fun notifyItemChangedIfPresent(uri: String?) {
         if (isSongInSavedTracks(uri)) {
-            notifyItemChanged(savedTracks.indexOf(getSongInSavedTracks(uri)))
+            notifyItemChanged(savedTracks.indexOf(getSongFromSavedTracks(uri)))
         }
     }
 

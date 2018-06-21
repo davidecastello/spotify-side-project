@@ -2,9 +2,11 @@ package io.moku.davide.spotify_side_project.album
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toolbar
 import io.moku.davide.spotify_side_project.Constants
 import io.moku.davide.spotify_side_project.MainActivity
@@ -16,6 +18,7 @@ import kaaes.spotify.webapi.android.models.SavedAlbum
 import kaaes.spotify.webapi.android.models.TrackSimple
 import kotlinx.android.synthetic.main.fragment_album_page.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by Davide Castello on 30/05/18.
@@ -25,6 +28,7 @@ import java.util.*
 class AlbumPageFragment : CustomTabbedFragment() {
 
     private var album: Album? = null
+    private var albumTracksAdapter: AlbumTracksAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState:
     Bundle?): View? {
@@ -46,7 +50,7 @@ class AlbumPageFragment : CustomTabbedFragment() {
     fun setListeners() {
         albumPageBackButton.setOnClickListener({ (parentFragment as AlbumFragment).hideAlbumPageFragment() })
         albumPlayButton.setOnClickListener({
-            // TODO play full album - just like the click on the first song
+            albumTracksAdapter?.playAlbum(getMainActivity())
         })
     }
 
@@ -61,17 +65,43 @@ class AlbumPageFragment : CustomTabbedFragment() {
             ImagesUtils.loadUrlIntoImageView(album?.coverUrl(), context, albumCover, R.drawable.ic_album_white_24dp, false)
             ImagesUtils.loadUrlIntoImageView(album?.coverUrl(), context, albumCoverBackground, R.drawable.ic_album_white_24dp, false)
             // Album tracks
-            // TODO RecyclerView + Adapter using: album?.tracks?.items
+            updateAlbumTracks()
+            // TODO: 1. RecyclerView non scorre correttamente
         }
+    }
+
+    fun updateAlbumTracks() {
+        if (albumTracksAdapter != null) {
+            if (albumTracksRV.adapter != null) {
+                albumTracksAdapter?.notifyDataSetChanged()
+            } else {
+                initRecyclerView()
+            }
+        } else {
+            setupAdapter()
+        }
+    }
+
+    fun setupAdapter() {
+        albumTracksAdapter = AlbumTracksAdapter(activity, album?.tracks?.items as ArrayList)
+        if (albumTracksRV.adapter == null) {
+            initRecyclerView()
+        }
+    }
+
+    fun initRecyclerView() {
+        albumTracksRV.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
+        albumTracksRV.adapter = albumTracksAdapter
     }
 
     override fun onResume() {
         super.onResume()
-        //albumSongsAdapter?.notifyDataSetChanged()
+        albumTracksAdapter?.notifyDataSetChanged()
     }
 
     override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
-        // TODO AlbumPageFragment.notifySongs()
+        albumTracksAdapter?.notifyItemChangedIfPresent(oldSong?.uri)
+        albumTracksAdapter?.notifyItemChangedIfPresent(currentSong?.uri)
     }
 
     override fun back() {
