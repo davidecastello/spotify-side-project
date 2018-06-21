@@ -57,8 +57,8 @@ class AlbumTracksAdapter(val context: Context, var albumTracks: ArrayList<TrackS
             proceed(track, a, true)
         } else {
             if (oldWhosPlaying != WhosPlaying.MY_ALBUMS) {
-                // TODO: 2. a.tryToUpdateUIinOldWhosPlaying
                 proceed(track, a, true)
+                a.updateView()
             } else {
                 if (!isAlreadyPlayingThisTrack) {
                     // update UI

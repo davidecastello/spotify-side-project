@@ -49,8 +49,8 @@ class SavedTracksAdapter(val context: Context, var savedTracks: ArrayList<SavedT
                 proceed(track, a, true)
             } else {
                 if (oldWhosPlaying != WhosPlaying.MY_TRACKS) {
-                    // TODO: 2. a.tryToUpdateUIinOldWhosPlaying
                     proceed(track, a, true)
+                    a.updateView()
                 } else {
                     if (!isAlreadyPlayingThisTrack) {
                         // update UI
