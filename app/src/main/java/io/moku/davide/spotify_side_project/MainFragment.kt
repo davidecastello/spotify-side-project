@@ -14,7 +14,7 @@ import io.moku.davide.spotify_side_project.album.AlbumFragment
 import io.moku.davide.spotify_side_project.playlist.PlaylistFragment
 import io.moku.davide.spotify_side_project.tracks.TracksFragment
 import io.moku.davide.spotify_side_project.utils.fragments.CustomFragment
-import kaaes.spotify.webapi.android.models.TrackSimple
+import kaaes.spotify.webapi.android.models.Track
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
 
@@ -147,7 +147,7 @@ class MainFragment : CustomFragment() {
         getMainActivity()._playButtonPressed()
     }
 
-    override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
+    override fun notifySongs(oldSong: Track?, currentSong: Track?) {
         if (needsUpdate()) {
             (viewpager.adapter as MainFragmentPagerAdapter).getFragment(viewpager.currentItem).notifySongs(oldSong, currentSong)
         }
@@ -170,7 +170,7 @@ class MainFragment : CustomFragment() {
         currentTrackArtistTV.text = getMainActivity().currentTrack?.artist()
     }
 
-    fun TrackSimple.artist() : String = artists.map { it -> it.name }.joinToString(separator = ", ")
+    fun Track.artist() : String = artists.map { it -> it.name }.joinToString(separator = ", ")
 
     fun showPlayer() {
         if (!isPlayerVisible) {

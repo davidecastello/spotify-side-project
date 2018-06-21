@@ -21,7 +21,7 @@ import io.moku.davide.spotify_side_project.nowPlaying.NowPlayingFragment
 import io.moku.davide.spotify_side_project.utils.fragments.CustomFragment
 
 import io.moku.davide.spotify_side_project.utils.preferences.PreferencesManager
-import kaaes.spotify.webapi.android.models.TrackSimple
+import kaaes.spotify.webapi.android.models.Track
 
 class MainActivity : AppCompatActivity(), Player.NotificationCallback, ConnectionStateCallback {
 
@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
     private var isNowPlayingFragmentVisible = false
     private var isLoginOpen = false
 
-    var queue: ArrayList<TrackSimple> = arrayListOf()
-    var currentTrack : TrackSimple? = null
+    var queue: ArrayList<Track> = arrayListOf()
+    var currentTrack : Track? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -227,7 +227,7 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
 
     fun clearQueue() = queue.clear()
 
-    fun addToQueue(tracks: List<TrackSimple>) {
+    fun addToQueue(tracks: List<Track>) {
         queue.addAll(tracks)
     }
 
@@ -237,39 +237,39 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
 
     fun getCurrentTrackPositionInQueue() : Int = queue.indexOf(currentTrack)
 
-    fun getTrackInQueue(trackUri : String) : TrackSimple = queue.filter { it.uri == trackUri }.first()
+    fun getTrackInQueue(trackUri : String) : Track = queue.filter { it.uri == trackUri }.first()
 
-    fun clearAndAddToQueue(tracks: List<TrackSimple>) {
+    fun clearAndAddToQueue(tracks: List<Track>) {
         clearQueue()
         addToQueue(tracks)
     }
 
-    fun prevSong() : TrackSimple {
+    fun prevSong() : Track {
         val oldCurrentTrack = currentTrack
 
         //val oldCurrentPosition = findSong(true, queue.first())
-        //val currentPosition : Int = queue.indexOf(currentTrack as TrackSimple)
+        //val currentPosition : Int = queue.indexOf(currentTrack as Track)
 
         updateCurrentTrack(true, queue.first())
         currentFragment().notifySongs(oldCurrentTrack, currentTrack)
 
-        return currentTrack as TrackSimple
+        return currentTrack as Track
     }
 
-    fun nextSong() : TrackSimple {
+    fun nextSong() : Track {
         val oldCurrentTrack = currentTrack
 
         //val oldCurrentPosition = findSong(false, queue.last())
-        //val currentPosition : Int = queue.indexOf(currentTrack as TrackSimple)
+        //val currentPosition : Int = queue.indexOf(currentTrack as Track)
 
         updateCurrentTrack(false, queue.last())
         currentFragment().notifySongs(oldCurrentTrack, currentTrack)
 
-        return currentTrack as TrackSimple
+        return currentTrack as Track
     }
 
     // updated the currentTrack property and returns the old current position
-    fun findSong(prev : Boolean, comparisonTrack : TrackSimple) : Int {
+    fun findSong(prev : Boolean, comparisonTrack : Track) : Int {
         var oldCurrentPosition : Int = -1
         if (currentTrack == null)
             currentTrack = if (prev) queue.last() else queue.first()
@@ -277,28 +277,28 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
             oldCurrentPosition = queue.indexOf(comparisonTrack)
             currentTrack = if (prev) queue.last() else queue.first()
         } else {
-            oldCurrentPosition = queue.indexOf(currentTrack as TrackSimple)
-            var p = queue.indexOf(currentTrack as TrackSimple)
+            oldCurrentPosition = queue.indexOf(currentTrack as Track)
+            var p = queue.indexOf(currentTrack as Track)
             p = if (prev) p-1 else p+1
             currentTrack = queue.get(p)
         }
         return oldCurrentPosition
     }
 
-    fun updateCurrentTrack(prev : Boolean, comparisonTrack : TrackSimple) {
+    fun updateCurrentTrack(prev : Boolean, comparisonTrack : Track) {
         if (currentTrack == null || currentTrack == comparisonTrack)
             currentTrack = if (prev) queue.last() else queue.first()
         else {
-            var p = queue.indexOf(currentTrack as TrackSimple)
+            var p = queue.indexOf(currentTrack as Track)
             p = if (prev) p-1 else p+1
             currentTrack = queue.get(p)
         }
     }
 
-    fun playTrack(track: TrackSimple) {
+    fun playTrack(track: Track) {
         val oldCurrent = currentTrack
         currentTrack = track
-        //notifyItemsChanged(pos1 = queue.indexOf(oldCurrent), pos2 = queue.indexOf(currentTrack as TrackSimple))
+        //notifyItemsChanged(pos1 = queue.indexOf(oldCurrent), pos2 = queue.indexOf(currentTrack as Track))
         playSong(currentTrack?.uri)
     }
 

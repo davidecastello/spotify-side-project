@@ -125,7 +125,7 @@ class AlbumPageFragment : CustomTabbedFragment() {
         albumTracksAdapter?.notifyDataSetChanged()
     }
 
-    override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
+    override fun notifySongs(oldSong: Track?, currentSong: Track?) {
         albumTracksAdapter?.notifyItemChangedIfPresent(oldSong?.uri)
         albumTracksAdapter?.notifyItemChangedIfPresent(currentSong?.uri)
     }

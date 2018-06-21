@@ -16,7 +16,7 @@ import kaaes.spotify.webapi.android.SpotifyCallback
 import kaaes.spotify.webapi.android.SpotifyError
 import kaaes.spotify.webapi.android.models.Pager
 import kaaes.spotify.webapi.android.models.SavedAlbum
-import kaaes.spotify.webapi.android.models.TrackSimple
+import kaaes.spotify.webapi.android.models.Track
 import kotlinx.android.synthetic.main.fragment_album_list.*
 import retrofit.client.Response
 import java.util.concurrent.CopyOnWriteArraySet
@@ -54,7 +54,7 @@ class AlbumListFragment : CustomTabbedFragment() {
         savedAlbumsAdapter?.notifyDataSetChanged()
     }
 
-    override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
+    override fun notifySongs(oldSong: Track?, currentSong: Track?) {
         // do nothing
     }
 

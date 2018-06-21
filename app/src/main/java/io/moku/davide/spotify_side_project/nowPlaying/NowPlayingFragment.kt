@@ -9,7 +9,7 @@ import android.view.animation.Interpolator
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.utils.fragments.CustomFragment
-import kaaes.spotify.webapi.android.models.TrackSimple
+import kaaes.spotify.webapi.android.models.Track
 import kotlinx.android.synthetic.main.fragment_now_playing.*
 
 /**
@@ -122,7 +122,7 @@ class NowPlayingFragment : CustomFragment() {
         artworksViewPager.setCurrentItem(artworksViewPager.adapter.getItemPosition(getMainActivity().currentTrack))
     }
 
-    override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
+    override fun notifySongs(oldSong: Track?, currentSong: Track?) {
         // no need for now
     }
 
@@ -143,6 +143,6 @@ class NowPlayingFragment : CustomFragment() {
         updateArtworksViewPager()
     }
 
-    fun TrackSimple.artist() : String = artists.map { it -> it.name }.joinToString(separator = ", ")
+    fun Track.artist() : String = artists.map { it -> it.name }.joinToString(separator = ", ")
 
 }

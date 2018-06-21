@@ -11,7 +11,7 @@ import android.os.Build
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.WhosPlaying
-import kaaes.spotify.webapi.android.models.TrackSimple
+import kaaes.spotify.webapi.android.models.Track
 
 
 /**
@@ -69,7 +69,7 @@ class SavedTracksAdapter(val context: Context, var savedTracks: ArrayList<SavedT
     fun proceed(track: SavedTrack, a: MainActivity, shouldResetQueue: Boolean) {
         // clear queue and add all saved tracks if necessary
         if (shouldResetQueue) {
-            a.clearAndAddToQueue(savedTracks.trackSimples())
+            a.clearAndAddToQueue(savedTracks.tracks())
         }
         // play the chosen song
         a.playTrack(a.getTrackInQueue(track.uri()))
@@ -96,5 +96,5 @@ class SavedTracksAdapter(val context: Context, var savedTracks: ArrayList<SavedT
     fun SavedTrack.album() : String = track.album.name
     fun SavedTrack.artist() : String = track.artists.map { it -> it.name }.joinToString(separator = ", ")
     fun SavedTrack.artistsAndAlbum() : String = "${artist()} • ${album()}"
-    fun ArrayList<SavedTrack>.trackSimples() : List<TrackSimple> = map { it -> it.track as TrackSimple }
+    fun ArrayList<SavedTrack>.tracks() : List<Track> = map { it -> it.track }
 }

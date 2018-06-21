@@ -14,10 +14,7 @@ import io.moku.davide.spotify_side_project.network.NetworkManager
 import io.moku.davide.spotify_side_project.utils.fragments.CustomTabbedFragment
 import kaaes.spotify.webapi.android.SpotifyCallback
 import kaaes.spotify.webapi.android.SpotifyError
-import kaaes.spotify.webapi.android.models.Album
-import kaaes.spotify.webapi.android.models.Pager
-import kaaes.spotify.webapi.android.models.SavedAlbum
-import kaaes.spotify.webapi.android.models.TrackSimple
+import kaaes.spotify.webapi.android.models.*
 import retrofit.client.Response
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -109,7 +106,7 @@ class AlbumFragment : CustomTabbedFragment() {
         super.onResume()
     }
 
-    override fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?) {
+    override fun notifySongs(oldSong: Track?, currentSong: Track?) {
         if (isAdded) {
             val currentFragment = currentFragment()
             if (currentFragment.isAdded && !currentFragment.isHidden) {

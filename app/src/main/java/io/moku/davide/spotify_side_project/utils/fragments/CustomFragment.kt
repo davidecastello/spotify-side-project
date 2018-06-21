@@ -1,7 +1,7 @@
 package io.moku.davide.spotify_side_project.utils.fragments
 
 import android.support.v4.app.Fragment
-import kaaes.spotify.webapi.android.models.TrackSimple
+import kaaes.spotify.webapi.android.models.Track
 
 /**
  * Created by Davide Castello on 09/03/18.
@@ -10,7 +10,7 @@ import kaaes.spotify.webapi.android.models.TrackSimple
  */
 abstract class CustomFragment : Fragment() {
     abstract fun updateView()
-    abstract fun notifySongs(oldSong: TrackSimple?, currentSong: TrackSimple?)
+    abstract fun notifySongs(oldSong: Track?, currentSong: Track?)
     abstract fun updatePlayerInfo()
     abstract fun updatePlayButton()
 }
