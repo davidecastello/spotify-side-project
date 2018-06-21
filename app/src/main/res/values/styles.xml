@@ -24,11 +24,14 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <!-- ALBUM PAGE -->
+
     <style name="albumPageTitle" parent="customTextViewsBold">
         <item name="android:textSize">24sp</item>
         <item name="android:ellipsize">end</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="albumPageArtist" parent="customTextViewsLight">
@@ -36,15 +39,16 @@
         <item name="android:ellipsize">end</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="albumPageInfoText" parent="customTextViewsLight">
-
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="albumPageDimmer">
-        <item name="android:alpha">0.9</item>
-        <item name="android:src">@color/white</item>
+        <item name="android:alpha">0.8</item>
+        <item name="android:src">@color/black</item>
     </style>
 
     <style name="albumPagePlayButton" parent="customTextViewsBold">
@@ -52,6 +56,10 @@
         <item name="android:background">@drawable/album_play_button_background</item>
         <item name="android:text">@string/play</item>
     </style>
+
+
+
+
 
     <style name="line">
         <item name="android:background">@color/darkerGrey</item>
