@@ -15,6 +15,7 @@ import io.moku.davide.spotify_side_project.utils.assets.ImagesUtils
 import io.moku.davide.spotify_side_project.utils.fragments.CustomTabbedFragment
 import kaaes.spotify.webapi.android.models.Album
 import kaaes.spotify.webapi.android.models.SavedAlbum
+import kaaes.spotify.webapi.android.models.Track
 import kaaes.spotify.webapi.android.models.TrackSimple
 import kotlinx.android.synthetic.main.fragment_album_page.*
 import java.util.*
@@ -81,8 +82,34 @@ class AlbumPageFragment : CustomTabbedFragment() {
         }
     }
 
+    fun TrackSimple.toTrack() : Track {
+        val track = Track()
+        track.artists = this.artists
+        track.available_markets = this.available_markets
+        track.is_playable = this.is_playable
+        track.linked_from = this.linked_from
+        track.disc_number = this.disc_number
+        track.duration_ms = this.duration_ms
+        track.explicit = this.explicit
+        track.external_urls = this.external_urls
+        track.href = this.href
+        track.id = this.id
+        track.name = this.name
+        track.preview_url = this.preview_url
+        track.track_number = this.track_number
+        track.type = this.type
+        track.uri = this.uri
+        return track
+    }
+
+    fun Track.setAlbum(album: Album?) : Track {
+        this.album = album
+        return this
+    }
+
     fun setupAdapter() {
-        albumTracksAdapter = AlbumTracksAdapter(activity, album?.tracks?.items as ArrayList)
+        val albumTracks = album?.tracks?.items?.map { it -> it.toTrack().setAlbum(album) }
+        albumTracksAdapter = AlbumTracksAdapter(activity, albumTracks as ArrayList<Track>)
         if (albumTracksRV.adapter == null) {
             initRecyclerView()
         }

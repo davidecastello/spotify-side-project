@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import io.moku.davide.spotify_side_project.MainActivity
 import io.moku.davide.spotify_side_project.R
 import io.moku.davide.spotify_side_project.WhosPlaying
-import kaaes.spotify.webapi.android.models.TrackSimple
+import kaaes.spotify.webapi.android.models.Track
 import kotlinx.android.synthetic.main.album_track_cell_layout.view.*
 
 /**
@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.album_track_cell_layout.view.*
  * Project: spotify-side-project
  * Copyright © 2018 Moku S.r.l. All rights reserved.
  */
-class AlbumTracksAdapter(val context: Context, var albumTracks: ArrayList<TrackSimple>) : RecyclerView.Adapter<AlbumTracksAdapter.AlbumTrackViewHolder>() {
+class AlbumTracksAdapter(val context: Context, var albumTracks: ArrayList<Track>) : RecyclerView.Adapter<AlbumTracksAdapter.AlbumTrackViewHolder>() {
 
     override fun getItemCount(): Int = albumTracks.size
 
@@ -46,7 +46,7 @@ class AlbumTracksAdapter(val context: Context, var albumTracks: ArrayList<TrackS
         }
     }
 
-    fun playTrack(track: TrackSimple, a: MainActivity) {
+    fun playTrack(track: Track, a: MainActivity) {
         val oldWhosPlaying = a.getWhosPlaying()
         val isAlreadyPlayingThisTrack : Boolean = a.currentTrack?.id == track.id
 
@@ -73,7 +73,7 @@ class AlbumTracksAdapter(val context: Context, var albumTracks: ArrayList<TrackS
         }
     }
 
-    fun proceed(track: TrackSimple, a: MainActivity, shouldResetQueue: Boolean) {
+    fun proceed(track: Track, a: MainActivity, shouldResetQueue: Boolean) {
         // clear queue and add all saved tracks if necessary
         if (shouldResetQueue) {
             a.clearAndAddToQueue(albumTracks)
@@ -97,5 +97,5 @@ class AlbumTracksAdapter(val context: Context, var albumTracks: ArrayList<TrackS
     class AlbumTrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     /* Useful extensions */
-    fun TrackSimple.artist() : String = artists.map { it -> it.name }.joinToString(separator = ", ")
+    fun Track.artist() : String = artists.map { it -> it.name }.joinToString(separator = ", ")
 }

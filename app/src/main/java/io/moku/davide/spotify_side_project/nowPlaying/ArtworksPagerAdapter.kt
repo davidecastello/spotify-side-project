@@ -26,7 +26,6 @@ class ArtworksPagerAdapter(var mainActivity: MainActivity) : PagerAdapter() {
         return view
     }
     fun setupItem(view: View?, trackSimple: TrackSimple) {
-        // TODO: 3. utilizzare sempre Track, in modo da poter recuperare le info dell'album
         if (trackSimple is Track) {
             val images = trackSimple.album.images
             val coverUrl = images.first().url
