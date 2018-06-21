@@ -66,7 +66,6 @@ class AlbumPageFragment : CustomTabbedFragment() {
             ImagesUtils.loadUrlIntoImageView(album?.coverUrl(), context, albumCoverBackground, R.drawable.ic_album_white_24dp, false)
             // Album tracks
             updateAlbumTracks()
-            // TODO: 1. RecyclerView non scorre correttamente
         }
     }
 
