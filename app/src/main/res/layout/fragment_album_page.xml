@@ -27,11 +27,10 @@
 
         <ImageView
             android:id="@+id/dimmer"
+            style="@style/albumPageDimmer"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:alpha="0.9"
             android:contentDescription="@string/app_name"
-            android:src="@color/white"
             app:layout_constraintBottom_toBottomOf="@id/albumCoverBackground"
             app:layout_constraintEnd_toEndOf="@id/albumCoverBackground"
             app:layout_constraintStart_toStartOf="@id/albumCoverBackground"
@@ -94,7 +93,7 @@
 
         <TextView
             android:id="@+id/albumYear"
-            style="@style/customTextViewsLight"
+            style="@style/albumPageInfoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -108,7 +107,7 @@
 
         <TextView
             android:id="@+id/albumDuration"
-            style="@style/customTextViewsLight"
+            style="@style/albumPageInfoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"

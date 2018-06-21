@@ -38,6 +38,15 @@
         <item name="android:maxLines">1</item>
     </style>
 
+    <style name="albumPageInfoText" parent="customTextViewsLight">
+
+    </style>
+
+    <style name="albumPageDimmer">
+        <item name="android:alpha">0.9</item>
+        <item name="android:src">@color/white</item>
+    </style>
+
     <style name="albumPagePlayButton" parent="customTextViewsBold">
         <item name="android:textSize">14sp</item>
         <item name="android:background">@drawable/album_play_button_background</item>
