@@ -57,6 +57,7 @@ class MainFragment : CustomFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        hidePlayer()
         // setup view pager
         setupViewPager()
         // listeners
@@ -174,10 +175,18 @@ class MainFragment : CustomFragment() {
 
     fun showPlayer() {
         if (!isPlayerVisible) {
-            playerLayout.visibility = View.VISIBLE
-            line2.visibility = View.VISIBLE
-            isPlayerVisible = true
+            _showPlayer(true)
         }
+    }
+
+    private fun _showPlayer(show: Boolean) {
+        playerLayout.visibility = if(show) View.VISIBLE else View.GONE
+        line2.visibility = if(show) View.VISIBLE else View.GONE
+        isPlayerVisible = show
+    }
+
+    fun hidePlayer() {
+        _showPlayer(false)
     }
 
     override fun updatePlayButton() {
