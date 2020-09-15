@@ -7,9 +7,9 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 
-import com.spotify.sdk.android.authentication.AuthenticationClient
-import com.spotify.sdk.android.authentication.AuthenticationRequest
-import com.spotify.sdk.android.authentication.AuthenticationResponse
+import com.spotify.sdk.android.auth.AuthorizationClient
+import com.spotify.sdk.android.auth.AuthorizationRequest
+import com.spotify.sdk.android.auth.AuthorizationResponse
 import com.spotify.sdk.android.player.Config
 import com.spotify.sdk.android.player.ConnectionStateCallback
 import com.spotify.sdk.android.player.Error
@@ -331,10 +331,10 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
             // LOCK LOGIN
             isLoginOpen = true
             // Open Login
-            val builder = AuthenticationRequest.Builder(Constants.CLIENT_ID, AuthenticationResponse.Type.TOKEN, Constants.SPOTIFY_REDIRECT_URI)
+            val builder = AuthorizationRequest.Builder(Constants.CLIENT_ID, AuthorizationResponse.Type.TOKEN, Constants.SPOTIFY_REDIRECT_URI)
             builder.setScopes(arrayOf("user-read-private", "user-library-read", "streaming"))
             val request = builder.build()
-            AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request)
+            AuthorizationClient.openLoginActivity(this, REQUEST_CODE, request)
         }
     }
 
@@ -345,8 +345,8 @@ class MainActivity : AppCompatActivity(), Player.NotificationCallback, Connectio
 
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
-            val response = AuthenticationClient.getResponse(resultCode, intent)
-            if (response.type == AuthenticationResponse.Type.TOKEN) {
+            val response = AuthorizationClient.getResponse(resultCode, intent)
+            if (response.type == AuthorizationResponse.Type.TOKEN) {
                 val accessToken = response.accessToken
                 PreferencesManager.storeAccessToken(this, accessToken)
                 setupPlayer(accessToken)
